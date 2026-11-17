@@ -1,4 +1,5 @@
 /* Données et logique recopiées depuis la Page d'origine. Ne pas modifier les fiches. */
+import { D3, MOD3 } from "./added";
 
 const MINT = "#05F3B9";
 const CYAN = "#01B4ED";
@@ -34,6 +35,7 @@ const BRANDS: { value: string; label: string }[] = [
   { value: "al", label: "Daikin Altherma (PAC air/eau)" },
   { value: "ec", label: "Mitsubishi Ecodan (PAC air/eau)" },
   { value: "af", label: "Atlantic Alféa (PAC air/eau)" },
+  { value: "yu", label: "Hitachi Yutaki (PAC air/eau)" },
 ];
 const BL: Record<string, string> = {};
 BRANDS.forEach((b) => { BL[b.value] = b.label; });
@@ -1125,7 +1127,7 @@ function build(): Item[] {
     const y = r[6] ? r[6].split("|") : DEF[r[4]] ? DEF[r[4]].split("|") : [];
     out.push({ id: b + i, b, s, c: r[2], m: r[3], k: r[4], x: r[5] ? r[5].split("|") : [], y, v: v || r[7] === 1 });
   };
-  D.concat(D2).forEach((r: R, i: number) => {
+  D.concat(D2, D3).forEach((r: R, i: number) => {
     mk(r, i, r[0], r[1], false);
     if (r[0] === "mi" && MUNDO_MIDEA.indexOf(r[2]) >= 0) mk(r, i, "mu", "MUPR-H3 / H4 / H6 (table identique Midea)", false);
     if (r[0] === "mi" && AIRTON.indexOf(r[2]) >= 0) mk(r, i, "ai", "Split (table type Midea, source non officielle)", true);
@@ -1155,6 +1157,7 @@ const READ: Record<string, string[]> = {
   al: ["Interface MMI : ouvrir le menu principal > Dysfonctionnement : le code et une description courte s'affichent", "Appuyer de nouveau pour la description longue", "Toujours noter les deux chiffres après le tiret", "Table relevée sur le manuel de service Daikin Altherma 3 H HT W (ESIE25) ; autres Altherma 3 : à vérifier"],
   ec: ["Code affiché sur la télécommande principale de l'Ecodan", "Annuler : arrêter le système (maintenir la touche ON/OFF 3 s sur la télécommande principale)", "Codes U et F : défaut de l'UE, voir son manuel"],
   af: ["Le numéro d'erreur s'affiche sur l'écran d'accueil ; le sélectionner avec la molette pour son libellé", "Erreur de l'UE : 370 « Générateur thermodynamique » puis le défaut de l'UE", "Sans afficheur : LED verte et rouge de la carte interface du module hydraulique, ou LED de la carte UE", "Historique : menu État du système > Historique des erreurs"],
+  yu: ["Code affiché sur la commande PC-ARFH1E", "Les codes 70, 72, 73, 74, 75 et 83 concernent le circuit d'eau", "Les codes 2, 4, 5, 6, 8 et 48 sont aussi décrits pour l'unité extérieure au chapitre 12.1.3"],
 };
 
 type M = [string, string, string, string, string, string, string, string, string, number?, string?];
@@ -1475,6 +1478,7 @@ const MOD2: M[] = [
   ["ai", "Gainable Airton", "n", "Gainable", "références non relevées", "à vérifier", "Catalogue Airton 2025/2026 (gamme annoncée)", "", NOTAB, 1],
 ];
 MOD2.forEach((m: M) => { MOD.push(m); });
+MOD3.forEach((m: M) => { MOD.push(m); });
 
 const MAL: Record<string, string> = {};
 MOD.forEach((m: M) => { if (m[7]) { const k = m[0] + "|" + m[7]; MAL[k] = (MAL[k] || "") + " " + m[1] + " " + m[4]; } });
