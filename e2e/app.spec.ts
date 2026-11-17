@@ -115,7 +115,8 @@ test("ouvrir la table de codes pour chaque marque", async ({ page }, testInfo) =
     await reset(page);
     await row(page, "Marque").getByRole("button", { name: pick.brand, exact: true }).click();
     await page.locator("#q").fill(pick.query);
-    await page.locator(".range-name", { hasText: pick.card }).first().click();
+    const card = page.locator("article.card").filter({ has: page.locator(".range-name", { hasText: pick.card }) }).first();
+    await card.click();
     await page.getByRole("button", { name: "Ouvrir la table de codes" }).click();
     await page.waitForFunction(() => {
       const title = document.querySelector("#codes h2");
@@ -221,7 +222,7 @@ test("manifeste, hors ligne et remplacement du cache", async ({ page, context })
   expect(worker.status()).toBe(200);
   const workerText = await worker.text();
   expect(workerText).toContain("skipWaiting");
-  expect(workerText).toContain("depan-clim-v2");
+  expect(workerText).toContain("depan-clim-v3");
 
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
   await page.evaluate(async () => {
@@ -232,13 +233,34 @@ test("manifeste, hors ligne et remplacement du cache", async ({ page, context })
   await page.locator("#q").waitFor();
   await page.waitForFunction(async () => {
     const keys = await caches.keys();
-    return keys.some((key) => key.startsWith("depan-clim-v2")) && !keys.some((key) => key.startsWith("workbox-"));
+    return keys.some((key) => key.startsWith("depan-clim-v3")) && !keys.some((key) => key.startsWith("workbox-"));
   });
 
   await context.setOffline(true);
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.locator("#q").fill("U4");
   await expect(page.locator(".code").first()).toContainText(/U4/i);
+});
+
+test("outils : pressions, CO2, surchauffe et charge", async ({ page }) => {
+  await openApp(page);
+  await page.getByRole("tab", { name: "Outils" }).click();
+  await expect(page.getByRole("heading", { name: "Pression / température" })).toBeVisible();
+  await expect(page.getByText(/7,12 bar relatifs/)).toBeVisible();
+  await expect(page.getByText(/surchauffe 5,0 K/)).toBeVisible();
+  await expect(page.getByText("140 g à ajouter")).toBeVisible();
+  await page.locator("select").first().selectOption("R410A");
+  await page.getByLabel("Charge de l'équipement").fill("10");
+  await expect(page.getByText(/20,88 t éq\. CO2/)).toBeVisible();
+  await expect(page.getByText(/tous les 12 mois/)).toBeVisible();
+  await page.getByRole("button", { name: "Mode clair" }).click();
+  await expect.poll(async () => page.evaluate(() => document.documentElement.dataset.theme)).toBe("light");
+  await page.getByRole("tab", { name: "Codes" }).click();
+  await page.locator("#q").fill("E5");
+  await page.locator("#codes article").first().click();
+  await page.getByRole("button", { name: "Copier" }).click();
+  await expect(page.getByRole("button", { name: "Copié" })).toBeVisible();
+  expect(errorsOf(page)).toEqual([]);
 });
 
 test("chargement et réactivité de la recherche", async ({ page }) => {

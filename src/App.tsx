@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import logo from "./assets/logo.webp";
 import {
   BL,
@@ -22,7 +22,11 @@ import {
   tyOf,
   type M,
 } from "./data";
+import { loadFavs, loadHistory, loadTheme, pushHistory, saveTheme, toggleFav, type Fav, type ThemeName } from "./prefs";
+import ToolsPanel from "./ToolsPanel";
 import { BulletList, Chip, Pill, Section, Status, Steps } from "./ui";
+
+export const UPDATED = "17 novembre 2026";
 
 const HELP = [
   "Taper un code (U4, E1, P5…), un mot-clé (sonde, condensats, 12 clignotements) ou un nom de gamme / une référence (Zen 3, HMIS3, FBA, PEAD) : les gammes puis les codes correspondants s'affichent.",
@@ -131,6 +135,16 @@ export default function App() {
   const [mt, setMt] = useState("all");
   const [mo, setMo] = useState("");
   const [mlim, setMlim] = useState(4);
+  const [view, setView] = useState<"codes" | "outils">("codes");
+  const [theme, setTheme] = useState<ThemeName>(() => loadTheme());
+  const [history, setHistory] = useState<string[]>(() => loadHistory());
+  const [favs, setFavs] = useState<Fav[]>(() => loadFavs());
+  const [copied, setCopied] = useState("");
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    saveTheme(theme);
+  }, [theme]);
 
   const mres = useMemo(() => rangesFor(q, brand, mt), [q, brand, mt]);
   const tset = useMemo(() => tablesFor(brand, mt), [brand, mt]);
@@ -170,7 +184,18 @@ export default function App() {
       <header className="top">
         <img src={logo} width={640} height={484} className="logo" alt="Climat Actif 66 – L'assurance confort" />
         <div className="grad-bar" />
+        <div className="top-meta">
+          <span>Mise à jour : {UPDATED}</span>
+          <button type="button" className="text-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            {theme === "dark" ? "Mode clair" : "Mode sombre"}
+          </button>
+        </div>
+        <div className="view-switch" role="tablist" aria-label="Section">
+          <button type="button" role="tab" aria-selected={view === "codes"} className={view === "codes" ? "chip on" : "chip"} onClick={() => setView("codes")}>Codes</button>
+          <button type="button" role="tab" aria-selected={view === "outils"} className={view === "outils" ? "chip on" : "chip"} onClick={() => setView("outils")}>Outils</button>
+        </div>
       </header>
+      {view === "outils" ? <ToolsPanel /> : <>
 
       <div id="rech">
         <label className="search-label" htmlFor="q">Code, gamme ou référence</label>
@@ -186,6 +211,7 @@ export default function App() {
             placeholder="ex. U4, E1, Zen 3, FBA, PEAD"
             value={q}
             onChange={(e) => { setQ(e.target.value); setLim(40); setMlim(4); }}
+            onKeyDown={(e) => { if (e.key === "Enter") setHistory(pushHistory(q)); }}
           />
           {q ? (
             <button type="button" className="clear" aria-label="Effacer la recherche" onClick={() => { setQ(""); setLim(40); setMlim(4); }}>
@@ -193,6 +219,16 @@ export default function App() {
             </button>
           ) : null}
         </div>
+        {history.length || favs.length ? (
+          <div className="chip-row memory">
+            {favs.map((fav) => (
+              <Chip key={fav.id} label={"★ " + fav.title} on={q === fav.query} onClick={() => { setQ(fav.query); setLim(40); setMlim(4); }} />
+            ))}
+            {history.map((item) => (
+              <Chip key={item} label={item} on={q === item} onClick={() => { setQ(item); setLim(40); setMlim(4); }} />
+            ))}
+          </div>
+        ) : null}
       </div>
 
       <div className="filters">
@@ -303,6 +339,17 @@ export default function App() {
                         </div>
                       </div>
                     ) : null}
+                    <div className="card-actions">
+                      <button type="button" className="text-btn" onClick={(ev) => { ev.stopPropagation(); copyCard(e, setCopied); }}>
+                        {copied === e.id ? "Copié" : "Copier"}
+                      </button>
+                      <button type="button" className="text-btn" onClick={(ev) => {
+                        ev.stopPropagation();
+                        setFavs(toggleFav({ id: e.id, title: e.c + " · " + BL[e.b], query: e.c }));
+                      }}>
+                        {favs.some((fav) => fav.id === e.id) ? "Retirer le favori" : "Favori"}
+                      </button>
+                    </div>
                   </div>
                 ) : null}
               </article>
@@ -356,8 +403,37 @@ export default function App() {
       </div>
 
       <p className="warning">Aide de terrain : le manuel de service du modèle fait foi ; « à vérifier » = sens incertain ou variable selon la série.</p>
+      </>}
     </div>
   );
+}
+
+function copyCard(e: { id: string; c: string; b: string; s: string; m: string; x: string[]; y: string[] }, setCopied: (id: string) => void) {
+  const text = [
+    e.c + " · " + BL[e.b] + " · " + e.s,
+    e.m,
+    e.x.length ? "Causes : " + e.x.join(" ; ") : "",
+    e.y.length ? "Vérifications : " + e.y.join(" ; ") : "",
+  ].filter(Boolean).join("\n");
+  const done = () => {
+    setCopied(e.id);
+    window.setTimeout(() => setCopied(""), 1500);
+  };
+  if (navigator.clipboard?.writeText) {
+    void navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+
+function fallbackCopy(text: string, done: () => void) {
+  const area = document.createElement("textarea");
+  area.value = text;
+  document.body.appendChild(area);
+  area.select();
+  document.execCommand("copy");
+  area.remove();
+  done();
 }
 
 function RangeCard(props: { m: M; open: boolean; onToggle: () => void; onOpenTable: () => void }) {

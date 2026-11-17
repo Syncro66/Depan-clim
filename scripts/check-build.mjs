@@ -26,7 +26,7 @@ if (!js.includes("serviceWorker.register") && !index.includes("serviceWorker.reg
   errors.push("service worker non enregistré");
 }
 if (!swText.includes("skipWaiting")) errors.push("skipWaiting absent du service worker");
-if (!swText.includes("depan-clim-v2")) errors.push("cache depan-clim-v2 absent du service worker");
+if (!swText.includes("depan-clim-v3")) errors.push("cache depan-clim-v3 absent du service worker");
 if (errors.length) {
   console.error(errors.join("\n"));
   console.error(JSON.stringify(manifest, null, 2));

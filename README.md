@@ -4,6 +4,8 @@ Aide de terrain de Climat Actif 66 : codes erreur et gammes de climatiseurs et d
 
 Ouvrir l'application : [https://syncro66.github.io/Depan-clim/](https://syncro66.github.io/Depan-clim/)
 
+L'onglet Outils calcule les pressions, la surchauffe, l'appoint de charge, les tonnes équivalent CO2 et montre les sondes et les sections de câble. La notice du modèle prime.
+
 La première ouverture se fait en ligne. Ensuite, les fiches restent disponibles hors connexion, sur téléphone comme sur ordinateur. Une nouvelle version remplace l'ancienne toute seule.
 
 ## Tests

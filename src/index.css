@@ -15,7 +15,22 @@
   --grad: linear-gradient(120deg, #05f3b9 0%, #01b4ed 28%, #0075fc 52%, #8201fa 82%, #d10cfd 100%);
   --grad-btn: linear-gradient(120deg, #0075fc 0%, #0134f9 45%, #8201fa 100%);
   --mono: ui-monospace, "SFMono-Regular", "Roboto Mono", Menlo, Consolas, monospace;
+  --field: #0c1422;
+  --acc: #05f3b9;
   color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #f4f7fb;
+  --card: #ffffff;
+  --text: #122033;
+  --text-2: #3c4c63;
+  --text-3: #5c6d84;
+  --border: rgba(16, 32, 58, 0.16);
+  --border-subtle: rgba(16, 32, 58, 0.08);
+  --field: #ffffff;
+  --acc: #0134f9;
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
@@ -72,6 +87,61 @@ button, input { font: inherit; }
   padding-top: 2px;
 }
 
+.top-meta, .view-switch, .card-actions, .memory {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.top-meta { color: var(--text-3); font-size: 12px; }
+
+.text-btn {
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.view-switch { justify-content: center; }
+
+.tools { display: flex; flex-direction: column; gap: 12px; }
+.tool {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tool h2 { margin: 0; font-size: 16px; }
+.tool-field { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--text-2); }
+.tool-field select, .tool-input input {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--field);
+  color: var(--text);
+  font-size: 16px;
+  padding: 8px 12px;
+}
+.tool-input { display: flex; align-items: center; gap: 8px; }
+.tool-input em { font-style: normal; color: var(--text-3); font-size: 13px; }
+.tool-result { margin: 0; font-weight: 600; }
+.tool-note { margin: 0; font-size: 12px; color: var(--text-3); line-height: 1.4; }
+.check { display: flex; gap: 8px; align-items: center; min-height: 44px; font-size: 14px; }
+.tool-table-wrap { overflow-x: auto; max-width: 100%; }
+.tool-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tool-table caption { text-align: left; color: var(--text-3); font-size: 12px; margin-bottom: 6px; }
+.tool-table th, .tool-table td { border-bottom: 1px solid var(--border-subtle); padding: 6px 4px; text-align: left; vertical-align: top; }
+
 .logo {
   width: min(180px, 56vw);
   height: auto;
@@ -103,7 +173,7 @@ button, input { font: inherit; }
   padding: 12px 42px 12px 14px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: #0c1422;
+  background: var(--field);
   color: var(--text);
   font-size: 16px;
 }
@@ -253,13 +323,13 @@ button, input { font: inherit; }
   font-family: var(--mono);
   font-weight: 600;
   font-size: 17px;
-  color: var(--mint);
+  color: var(--acc);
 }
 
 .range-name {
   font-weight: 600;
   font-size: 17px;
-  color: var(--mint);
+  color: var(--acc);
 }
 
 .sub { font-size: 13px; color: var(--text-2); }
