@@ -18,8 +18,8 @@ if (!e5.some((e) => e.c.toUpperCase().includes("E5"))) fail("E5 ne trouve aucun 
 const u0 = ALL.find((e) => e.b === "dk" && e.c === "U0" && e.s === "Split / Sky Air");
 if (!u0 || u0.m !== "Manque de réfrigérant") fail("fiche Daikin U0 absente ou modifiée");
 
-if (ALL.length !== 1185) fail("nombre de fiches inattendu : " + ALL.length);
-if (MOD.length !== 232) fail("nombre de gammes inattendu : " + MOD.length);
+if (ALL.length !== 1228) fail("nombre de fiches inattendu : " + ALL.length);
+if (MOD.length !== 234) fail("nombre de gammes inattendu : " + MOD.length);
 
 const series = new Set(ALL.map((e) => e.b + "|" + e.s));
 for (const gamme of MOD) {

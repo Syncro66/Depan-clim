@@ -1,6 +1,7 @@
 /* Données et logique recopiées depuis la Page d'origine. Ne pas modifier les fiches. */
 import { D3, MOD3 } from "./added";
 import { D4, MOD4 } from "./added2";
+import { D5, MOD5 } from "./added3";
 
 const MINT = "#05F3B9";
 const CYAN = "#01B4ED";
@@ -41,6 +42,8 @@ const BRANDS: { value: string; label: string }[] = [
   { value: "tv", label: "LG Therma V (PAC air/eau)" },
   { value: "va", label: "Vaillant aroTHERM (PAC air/eau)" },
   { value: "vi", label: "Viessmann Vitocal (PAC air/eau)" },
+  { value: "sp", label: "Sharp" },
+  { value: "bo", label: "Bosch / Buderus (PAC air/eau)" },
 ];
 const BL: Record<string, string> = {};
 BRANDS.forEach((b) => { BL[b.value] = b.label; });
@@ -1132,7 +1135,7 @@ function build(): Item[] {
     const y = r[6] ? r[6].split("|") : DEF[r[4]] ? DEF[r[4]].split("|") : [];
     out.push({ id: b + i, b, s, c: r[2], m: r[3], k: r[4], x: r[5] ? r[5].split("|") : [], y, v: v || r[7] === 1 });
   };
-  D.concat(D2, D3, D4).forEach((r: R, i: number) => {
+  D.concat(D2, D3, D4, D5).forEach((r: R, i: number) => {
     mk(r, i, r[0], r[1], false);
     if (r[0] === "mi" && MUNDO_MIDEA.indexOf(r[2]) >= 0) mk(r, i, "mu", "MUPR-H3 / H4 / H6 (table identique Midea)", false);
     if (r[0] === "mi" && AIRTON.indexOf(r[2]) >= 0) mk(r, i, "ai", "Split (table type Midea, source non officielle)", true);
@@ -1167,6 +1170,8 @@ const READ: Record<string, string[]> = {
   tv: ["Numéro affiché sur la commande filaire Therma V (souvent CH + le numéro sur les séries récentes)", "Notice d'installation MFL68681810, page 84", "Les séries plus récentes peuvent ajouter des codes : vérifier le manuel du modèle"],
   va: ["Code F. affiché sur le régulateur aroTHERM ou le module hydraulique", "Notice d'installation Vaillant 0020217825, annexe", "Genia Air (Saunier Duval) : ouvrir la notice Saunier Duval avant d'appliquer cette table"],
   vi: ["Message à 2 caractères sur la Vitotronic 200 (WO1C)", "Instructions de service Viessmann, aperçu des messages", "A9 est un message groupé : lire l'historique"],
+  sp: ["Numéro du type 1-0 ou 26-1 sur l'afficheur ou dans l'application Sharp", "Liste officielle Sharp : global.sharp, Air-Conditioner Error Code List", "Couper l'alimentation une minute, contrôler filtres et batteries, puis relire le numéro"],
+  bo: ["Code à 4 chiffres sur la régulation Compress 7000i / Logatherm", "Manuel de service Bosch 6721823168", "A01 est souvent un avertissement installateur, H01 une alarme client"],
 };
 
 type M = [string, string, string, string, string, string, string, string, string, number?, string?];
@@ -1489,6 +1494,7 @@ const MOD2: M[] = [
 MOD2.forEach((m: M) => { MOD.push(m); });
 MOD3.forEach((m: M) => { MOD.push(m); });
 MOD4.forEach((m: M) => { MOD.push(m); });
+MOD5.forEach((m: M) => { MOD.push(m); });
 
 const MAL: Record<string, string> = {};
 MOD.forEach((m: M) => { if (m[7]) { const k = m[0] + "|" + m[7]; MAL[k] = (MAL[k] || "") + " " + m[1] + " " + m[4]; } });
