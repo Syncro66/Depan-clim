@@ -16,7 +16,7 @@ export type PtPoint = { t: number; bubble: number; dew: number };
 export const PT_SOURCE =
   "ChillerSerwis, table P/T calculée avec CoolProp (pression relative, niveau de la mer). https://chillerserwis.eu/refrigerant-pressure-temperature-table/";
 
-export const PT: Record<Exclude<FluidId, "R454B">, PtPoint[]> = {
+export const PT: Record<FluidId, PtPoint[]> = {
   R32: [
     { t: -40, bubble: 0.76, dew: 0.76 },
     { t: -30, bubble: 1.72, dew: 1.72 },
@@ -82,6 +82,23 @@ export const PT: Record<Exclude<FluidId, "R454B">, PtPoint[]> = {
     { t: 50, bubble: 21.15, dew: 18.86 },
     { t: 60, bubble: 26.68, dew: 24.27 },
   ],
+  /**
+   * Bar relatifs, CoolProp, tous les 10 K.
+   * Source publiée : kelvin.engineering, table R-454B calculée avec CoolProp (Bell et al., Ind. Eng. Chem. Res. 2014).
+   * Chart fabricant : Chemours Opteon XL41, C-XL41PT-SI rév. 08-23 (kPa).
+   */
+  R454B: [
+    { t: -40, bubble: 0.66, dew: 0.58 },
+    { t: -30, bubble: 1.56, dew: 1.44 },
+    { t: -20, bubble: 2.79, dew: 2.63 },
+    { t: -10, bubble: 4.44, dew: 4.21 },
+    { t: 0, bubble: 6.59, dew: 6.28 },
+    { t: 10, bubble: 9.31, dew: 8.92 },
+    { t: 20, bubble: 12.71, dew: 12.22 },
+    { t: 30, bubble: 16.89, dew: 16.28 },
+    { t: 40, bubble: 21.94, dew: 21.24 },
+    { t: 50, bubble: 28.01, dew: 27.22 },
+  ],
 };
 
 export const FLUIDS: { id: FluidId; gwp: number; annexI: boolean; note: string }[] = [
@@ -89,7 +106,7 @@ export const FLUIDS: { id: FluidId; gwp: number; annexI: boolean; note: string }
   { id: "R410A", gwp: 2088, annexI: true, note: "Mélange R32/R125 50/50. PRP 2 088 selon la méthode de l'annexe VI (0,5×675 + 0,5×3 500)." },
   { id: "R407C", gwp: 1774, annexI: true, note: "Mélange R32/R125/R134a 23/25/52. PRP 1 774 (0,23×675 + 0,25×3 500 + 0,52×1 430)." },
   { id: "R134a", gwp: 1430, annexI: true, note: "HFC-134a, PRP 1 430, annexe I du règlement (UE) 2024/573." },
-  { id: "R454B", gwp: 465, annexI: true, note: "Mélange R32/R1234yf 68,9/31,1. PRP F-Gas 465 (AFCE, d'après l'annexe VI du règlement 2024/573). Pas de table P/T °C retenue ici." },
+  { id: "R454B", gwp: 465, annexI: true, note: "Mélange R32/R1234yf 68,9/31,1. PRP F-Gas 465. Table P/T CoolProp en bar relatifs ; le chart Chemours Opteon XL41 (C-XL41PT-SI) est en kPa." },
   { id: "R290", gwp: 0.02, annexI: false, note: "Propane, annexe VI du règlement (UE) 2024/573 : PRP 0,02. Hydrocarbure A3, pas un HFC de l'annexe I." },
 ];
 
@@ -107,7 +124,7 @@ function lerp(a: number, b: number, t: number): number {
 }
 
 /** Pression relative interpolée linéairement entre les points à 10 K. Null hors plage. */
-export function pressureAt(id: Exclude<FluidId, "R454B">, tempC: number, side: "bubble" | "dew"): number | null {
+export function pressureAt(id: FluidId, tempC: number, side: "bubble" | "dew"): number | null {
   const points = PT[id];
   if (tempC < points[0].t || tempC > points[points.length - 1].t) return null;
   for (let i = 0; i < points.length - 1; i++) {
@@ -122,7 +139,7 @@ export function pressureAt(id: Exclude<FluidId, "R454B">, tempC: number, side: "
 }
 
 /** Température de saturation pour une pression relative, interpolation linéaire. */
-export function temperatureAt(id: Exclude<FluidId, "R454B">, barGauge: number, side: "bubble" | "dew"): number | null {
+export function temperatureAt(id: FluidId, barGauge: number, side: "bubble" | "dew"): number | null {
   const points = PT[id];
   for (let i = 0; i < points.length - 1; i++) {
     const a = points[i];

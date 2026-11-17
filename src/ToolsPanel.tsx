@@ -51,11 +51,12 @@ export default function ToolsPanel() {
   const [hermetic, setHermetic] = useState(false);
   const [residential, setResidential] = useState(false);
   const meta = fluidOf(fluid);
-  const hasPt = fluid !== "R454B";
+  const hasPt = true;
+  const glide = fluid === "R407C" || fluid === "R454B";
 
   const pt = useMemo(() => {
     if (!hasPt) return null;
-    const id = fluid as Exclude<FluidId, "R454B">;
+      const id = fluid;
     const t = num(temp);
     const p = num(bar);
     return {
@@ -110,7 +111,7 @@ export default function ToolsPanel() {
             <Field label="Température" value={temp} onChange={setTemp} suffix="°C" />
             {pt?.atTemp && pt.atTemp.dew !== null ? (
               <p className="tool-result">
-                {fluid === "R407C"
+                {glide
                   ? "Bulle " + frNum(pt.atTemp.bubble ?? 0) + " bar rel. · rosée " + frNum(pt.atTemp.dew) + " bar rel."
                   : frNum(pt.atTemp.dew) + " bar relatifs (saturation)."}
               </p>
@@ -118,7 +119,7 @@ export default function ToolsPanel() {
             <Field label="Pression manomètre" value={bar} onChange={setBar} suffix="bar rel." />
             {pt?.atBar && pt.atBar.dew !== null ? (
               <p className="tool-result">
-                {fluid === "R407C"
+                {glide
                   ? "Bulle " + frNum(pt.atBar.bubble ?? 0, 1) + " °C · rosée " + frNum(pt.atBar.dew, 1) + " °C"
                   : "Saturation " + frNum(pt.atBar.dew, 1) + " °C"}
               </p>
@@ -127,14 +128,14 @@ export default function ToolsPanel() {
               <table className="tool-table">
                 <caption>Bar relatifs, points publiés tous les 10 K</caption>
                 <thead>
-                  <tr><th>°C</th><th>{fluid === "R407C" ? "Bulle" : "Pression"}</th>{fluid === "R407C" ? <th>Rosée</th> : null}</tr>
+                  <tr><th>°C</th><th>{glide ? "Bulle" : "Pression"}</th>{glide ? <th>Rosée</th> : null}</tr>
                 </thead>
                 <tbody>
-                  {PT[fluid as Exclude<FluidId, "R454B">].map((point) => (
+                  {PT[fluid].map((point) => (
                     <tr key={point.t}>
                       <td>{point.t}</td>
                       <td>{frNum(point.bubble)}</td>
-                      {fluid === "R407C" ? <td>{frNum(point.dew)}</td> : null}
+                      {glide ? <td>{frNum(point.dew)}</td> : null}
                     </tr>
                   ))}
                 </tbody>
@@ -142,7 +143,7 @@ export default function ToolsPanel() {
             </div>
             <p className="tool-note">R410A : la source ne donne que la rosée dans son tableau court. Le glissement est inférieur à 1 K. Interpolation linéaire entre les points. {PT_SOURCE}</p>
           </>
-        ) : <p className="tool-note">Pas de série °C CoolProp retenue pour le R454B. Utiliser la table du fabricant de fluide.</p>}
+        ) : null}
       </section>
 
       <section className="tool">
@@ -154,7 +155,7 @@ export default function ToolsPanel() {
           <p className="tool-result">
             Rosée {frNum(shsc.dew, 1)} °C
             {shsc.sh !== null ? " · surchauffe " + frNum(shsc.sh, 1) + " K" : ""}
-            {fluid === "R407C" ? " · bulle " + frNum(shsc.bubble, 1) + " °C" : ""}
+            {glide ? " · bulle " + frNum(shsc.bubble, 1) + " °C" : ""}
             {shsc.sc !== null ? " · sous-refroidissement " + frNum(shsc.sc, 1) + " K" : ""}
           </p>
         ) : <p className="tool-note">Indiquer d'abord une pression dans la table.</p>}

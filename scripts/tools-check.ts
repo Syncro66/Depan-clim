@@ -27,6 +27,9 @@ if (pressureAt("R134a", 0, "dew") !== 1.92) fail("R134a à 0 °C");
 if (pressureAt("R290", 20, "dew") !== 7.35) fail("R290 à 20 °C");
 if (pressureAt("R407C", 0, "bubble") !== 4.67) fail("R407C bulle 0 °C");
 if (pressureAt("R407C", 0, "dew") !== 3.59) fail("R407C rosée 0 °C");
+if (pressureAt("R454B", 0, "bubble") !== 6.59) fail("R454B bulle 0 °C");
+if (pressureAt("R454B", 0, "dew") !== 6.28) fail("R454B rosée 0 °C");
+if (pressureAt("R454B", 40, "bubble") !== 21.94) fail("R454B bulle 40 °C");
 near(pressureAt("R32", 5, "dew") ?? 0, (7.12 + 10.06) / 2, "interpolation R32 5 °C");
 near(temperatureAt("R32", 7.12, "dew") ?? 99, 0, "température R32 7,12 bar");
 

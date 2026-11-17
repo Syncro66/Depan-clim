@@ -169,7 +169,7 @@ test("cartes, afficher plus, sections et sources", async ({ page }) => {
   await page.getByRole("button", { name: "Méthodes de test" }).click();
   await expect(page.getByRole("heading", { name: "Sonde CTN (thermistance)" })).toBeVisible();
   await page.getByRole("button", { name: "Couverture et limites" }).click();
-  await expect(page.getByText("Daikin VRV IV (ESIE13-01)")).toBeVisible();
+  await expect(page.getByText("Saunier Duval Genia Air")).toBeVisible();
   await page.getByRole("button", { name: "Sources" }).click();
   const links = page.locator(".sources a");
   await expect.poll(async () => links.count()).toBeGreaterThan(20);
