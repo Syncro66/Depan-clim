@@ -1,4 +1,4 @@
-import { ALL, MOD, codesFor, rangesFor, tablesFor } from "../src/data.ts";
+import { ALL, BL, BRANDS, MOD, codesFor, rangesFor, tablesFor } from "../src/data.ts";
 
 function fail(msg: string): never {
   console.error(msg);
@@ -20,6 +20,45 @@ if (!u0 || u0.m !== "Manque de réfrigérant") fail("fiche Daikin U0 absente ou 
 
 if (ALL.length !== 1034) fail("nombre de fiches inattendu : " + ALL.length);
 if (MOD.length !== 226) fail("nombre de gammes inattendu : " + MOD.length);
+
+const series = new Set(ALL.map((e) => e.b + "|" + e.s));
+for (const gamme of MOD) {
+  if (!gamme[7]) continue;
+  if (!series.has(gamme[0] + "|" + gamme[7])) fail("table absente : " + gamme[0] + " / " + gamme[1] + " -> " + gamme[7]);
+}
+for (const fiche of ALL) {
+  if (!fiche.b.trim() || !fiche.s.trim() || !fiche.c.trim() || !fiche.m.trim()) fail("fiche vide : " + fiche.id);
+}
+const seen = new Set<string>();
+for (const fiche of ALL) {
+  const key = [fiche.b, fiche.s, fiche.c, fiche.m, fiche.k, fiche.x.join("|"), fiche.y.join("|")].join("\u0001");
+  if (seen.has(key)) fail("doublon : " + fiche.b + " " + fiche.c + " " + fiche.s);
+  seen.add(key);
+}
+const ids = new Set<string>();
+for (const fiche of ALL) {
+  if (ids.has(fiche.id)) fail("id en double : " + fiche.id);
+  ids.add(fiche.id);
+}
+for (const brand of BRANDS) {
+  if (brand.value === "all") continue;
+  if (!ALL.some((fiche) => fiche.b === brand.value)) fail("marque sans code : " + brand.label);
+  if (!BL[brand.value]) fail("libellé manquant : " + brand.value);
+}
+const expected: [string, "codes" | "gammes"][] = [
+  ["E5", "codes"], ["U4", "codes"], ["P1", "codes"], ["E28", "codes"], ["1102", "codes"], ["H6", "codes"],
+  ["sonde", "codes"], ["compresseur", "codes"], ["ventilateur", "codes"],
+  ["zen3", "gammes"], ["Zen 3", "gammes"], ["HMIS3", "gammes"], ["PEAD", "gammes"], ["FBA", "gammes"], ["hyoko", "gammes"], ["Hyōkō", "gammes"],
+];
+for (const [query, kind] of expected) {
+  const found = kind === "gammes" ? rangesFor(query, "all", "all").length : codesFor(query, "all", "all", "", "all", tablesFor("all", "all")).length;
+  if (found < 1) fail("recherche vide : " + query);
+}
+if (codesFor("zzzzqqqq", "all", "all", "", "all", {}).length !== 0 || rangesFor("zzzzqqqq", "all", "all").length !== 0) {
+  fail("zzzzqqqq devrait être vide");
+}
+if (!rangesFor("hyoko", "all", "all").some((gamme) => gamme[1].includes("Hyōkō"))) fail("hyoko ne trouve pas Hyōkō");
+if (!rangesFor("Zen 3", "all", "all").some((gamme) => gamme[1] === "Zen 3")) fail("Zen 3 absent");
 
 console.log(JSON.stringify({
   fiches: ALL.length,

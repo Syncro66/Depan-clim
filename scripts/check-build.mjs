@@ -19,9 +19,14 @@ if (!sizes.has("512x512")) errors.push("icône 512 absente");
 const sw = names.find((n) => n === "sw.js" || n.startsWith("sw-"));
 if (!sw) errors.push("service worker introuvable");
 const index = fs.readFileSync(path.join(dist, "index.html"), "utf8");
-if (!index.includes("registerSW") && !index.includes("serviceWorker.register") && !/sw\.js/.test(index)) {
-  errors.push("index.html n'enregistre pas le service worker");
+const assetJs = fs.readdirSync(path.join(dist, "assets")).filter((name) => name.endsWith(".js"));
+const js = assetJs.map((name) => fs.readFileSync(path.join(dist, "assets", name), "utf8")).join("\n");
+const swText = sw ? fs.readFileSync(path.join(dist, sw), "utf8") : "";
+if (!js.includes("serviceWorker.register") && !index.includes("serviceWorker.register")) {
+  errors.push("service worker non enregistré");
 }
+if (!swText.includes("skipWaiting")) errors.push("skipWaiting absent du service worker");
+if (!swText.includes("depan-clim-v2")) errors.push("cache depan-clim-v2 absent du service worker");
 if (errors.length) {
   console.error(errors.join("\n"));
   console.error(JSON.stringify(manifest, null, 2));

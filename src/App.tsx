@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import logo from "./assets/logo.webp";
 import {
   BL,
@@ -138,15 +138,31 @@ export default function App() {
   const res = useMemo(() => codesFor(q, brand, cat, ser, mt, tset), [q, brand, cat, ser, mt, tset]);
   const shown = res.slice(0, lim);
 
+  const jumpToCodes = useRef(false);
   const goTab = (b: string, s: string) => {
+    jumpToCodes.current = true;
     setBrand(b);
     setSer(s);
     setQ("");
     setCat("all");
     setLim(40);
     setOpen("");
-    document.getElementById("rech")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setMo("");
   };
+  useLayoutEffect(() => {
+    if (!jumpToCodes.current) return;
+    jumpToCodes.current = false;
+    const go = () => {
+      const el = document.getElementById("codes");
+      if (!el) return;
+      const top = window.scrollY + el.getBoundingClientRect().top - 8;
+      window.scrollTo(0, Math.max(0, top));
+    };
+    go();
+    window.requestAnimationFrame(go);
+    window.setTimeout(go, 80);
+    window.setTimeout(go, 320);
+  });
 
   return (
     <div className="app">
@@ -215,10 +231,14 @@ export default function App() {
           ))}
           <Chip label="Anciennes gammes" on={mt === "old"} onClick={() => { setMt("old"); setMlim(4); }} />
         </div>
-        {ser ? <div><Chip label={"Table : " + ser + "  ✕"} on={true} onClick={() => setSer("")} /></div> : null}
+        {ser ? (
+          <div className="table-chip">
+            <Chip label={"Table : " + ser + "  ✕"} on={true} onClick={() => setSer("")} />
+          </div>
+        ) : null}
       </div>
 
-      {mres.length ? (
+      {!ser && mres.length ? (
         <div className="stack">
           <div className="count">{"Gammes (" + mres.length + ")"}</div>
           {mres.slice(0, mlim).map((m) => (
@@ -230,7 +250,7 @@ export default function App() {
                 const id = "m" + MOD.indexOf(m);
                 setMo(mo === id ? "" : id);
               }}
-              onOpenTable={() => goTab(m[0], m[7])}
+              onOpenTable={() => goTab(m[0], m[7] || "")}
             />
           ))}
           {mres.length > mlim ? (
@@ -242,10 +262,10 @@ export default function App() {
       ) : null}
 
       {active ? (
-        <div className="stack">
-          <div className="count" aria-live="polite">
+        <div className="stack" id="codes">
+          <h2 className="count" aria-live="polite">
             {"Codes : " + res.length + " fiche" + (res.length > 1 ? "s" : "") + (res.length > shown.length ? ", " + shown.length + " affichées" : "")}
-          </div>
+          </h2>
           {shown.map((e) => {
             const isO = open === e.id;
             return (
@@ -376,7 +396,12 @@ function RangeCard(props: { m: M; open: boolean; onToggle: () => void; onOpenTab
           <button
             type="button"
             className="btn-grad"
-            onClick={(ev) => { ev.stopPropagation(); props.onOpenTable(); }}
+            onClick={(ev) => {
+              ev.preventDefault();
+              ev.stopPropagation();
+              ev.currentTarget.blur();
+              props.onOpenTable();
+            }}
           >
             {m[7] ? "Ouvrir la table de codes →" : "Voir les autres codes " + BL[m[0]] + " →"}
           </button>

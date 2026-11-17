@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "verify": "tsx scripts/verify.ts",
+    "test:e2e": "playwright test",
+    "test": "npm run verify && npm run test:e2e",
     "build": "tsc --noEmit && vite build && cp dist/index.html dist/404.html && node scripts/check-build.mjs",
     "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort"
   },
@@ -14,6 +16,7 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.1.0",

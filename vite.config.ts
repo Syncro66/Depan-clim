@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      injectRegister: "auto",
+      injectRegister: false,
       includeAssets: [
         "favicon.png",
         "icons/apple-touch-icon.png",
@@ -34,6 +34,7 @@ export default defineConfig({
         ],
       },
       workbox: {
+        cacheId: "depan-clim-v2",
         globPatterns: ["**/*.{js,css,html,png,webp,svg,ico,webmanifest,json}"],
         navigateFallback: "index.html",
         clientsClaim: true,
