@@ -7,8 +7,7 @@ const VRV = "Manuel de service Daikin ESIE13-01 (VRV IV RYYQ-T), partie 6. Libel
 const YU = "Manuel de service Hitachi Yutaki, chapitre 12, alarmes PC-ARFH1E. Libellé traduit du manuel.";
 
 function row(brand: string, series: string, code: string, meaning: string, cat: string, source: string, detail = "", unsure = false): Row {
-  const note = detail ? detail + "|Source : " + source : "Source : " + source;
-  const item: Row = [brand, series, code, meaning, cat, note, ""];
+  const item: Row = [brand, series, code, meaning, cat, "Source : " + source, detail];
   if (unsure) item.push(1);
   return item;
 }
