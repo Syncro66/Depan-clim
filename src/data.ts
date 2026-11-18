@@ -983,7 +983,6 @@ const D: R[] = [
   ["af", "Excellia A.I. (unité extérieure, via 370)", "A5 (verte 10 · rouge 5 · UE 20)", "Basse pression anormale", "fluide", "", ""],
 ];
 
-const AIRTON = ["E0 / EH00", "E1 / EL01", "E3 / EH03", "E4 / EH60", "E5 / EH61", "EC / EL0C", "F1 / EC53", "F3 / EC54", "P0 / PC00", "P1 / PC01", "P4 / PC04"];
 const MUNDO_MIDEA = ["E0 / EH00", "E1 / EL01", "E2 / EH02", "E3 / EH03", "E4 / EH60", "E5 / EH61", "EC / EL0C", "F0 / PC08", "F1 / EC53", "F2 / EC52", "F3 / EC54", "F4 / EC51", "F5 / EC07", "P0 / PC00", "P1 / PC01", "P2 / PC02", "P4 / PC04"];
 
 const D2: R[] = [
@@ -1149,13 +1148,18 @@ function build(): Item[] {
     out.push({ id: b + i, b, s, c: r[2], m: r[3], k: r[4], x: r[5] ? r[5].split("|") : [], y, v: v || r[7] === 1 });
   };
   D.concat(D2, D3, D4, D5, D6, D7, D8).forEach((r: R, i: number) => {
+    if (r[7] === 1) return;
     mk(r, i, r[0], r[1], false);
     if (r[0] === "mi" && MUNDO_MIDEA.indexOf(r[2]) >= 0) mk(r, i, "mu", "MUPR-H3 / H4 / H6 (table identique Midea)", false);
-    if (r[0] === "mi" && AIRTON.indexOf(r[2]) >= 0) mk(r, i, "ai", "Split (table type Midea, source non officielle)", true);
   });
   return out;
 }
 const ALL: Item[] = build();
+for (let i = BRANDS.length - 1; i >= 0; i--) {
+  if (BRANDS[i].value !== "all" && !ALL.some((e) => e.b === BRANDS[i].value)) BRANDS.splice(i, 1);
+}
+for (const key of Object.keys(BL)) delete BL[key];
+BRANDS.forEach((b) => { BL[b.value] = b.label; });
 
 const READ: Record<string, string[]> = {
   dk: ["Télécommande infrarouge : maintenir CANCEL (ou TIMER CANCEL) environ 5 s, « 00 » clignote", "Appuyer successivement : à chaque code, bip court ou double = pas ce code ; bip long = code du défaut", "Sortie : maintenir 5 s, ou retour automatique après 60 s sans action", "Si aucun code ne sort : méthode de contrôle n°2 du manuel de service"],
@@ -1214,7 +1218,7 @@ const RD_MH = "Commande filaire (RC-EX3, RC-E5…) : code E affiché (E1 à E59)
 const RD_HA = "Commande filaire : code affiché (01, 02, 07…) ; sinon LED3 / LED4 de la carte UI. Défaut UE : la commande affiche en hexadécimal le code UE + 20 (code UE 2 → 22 → « 16 »).";
 const RD_HAC = "Code affiché sur la façade (E1, E2, E7…) ; sinon LED3 / LED4 de la carte UI.";
 const RD_GR = "Code sur l'afficheur ou la commande filaire (table des muraux Gree, à confirmer pour ces unités Free Match).";
-const RD_MI = "Code EH / EL / EC / PC affiché ou clignotements Operation / Timer ; commande filaire KJR-120X : mêmes codes (défaut de communication commande / UI : EH 3·, à vérifier).";
+const RD_MI = "Code EH / EL / EC / PC affiché ou clignotements Operation / Timer ; commande filaire KJR-120X : mêmes codes (défaut de communication commande / UI : EH 3·).";
 const RD_MU = "Code sur l'afficheur ou clignotements des voyants RUN / TIMER de l'UI (table Mundoclima).";
 const RDS: [string, string][] = [["Daikin gainables, cassettes, Sky Air", RD_DK], ["Mitsubishi Electric P-series (PEAD, PEA, PLA, PCA, PKA)", RD_ME], ["Mitsubishi Electric série M (SEZ, SLZ, MLZ)", RD_MEM], ["Mitsubishi Electric City Multi", RD_CM], ["Toshiba unités multi (RAS-M)", RD_TOM], ["Atlantic / Fujitsu gainables, cassettes", RD_FJ], ["LG tertiaire", RD_LG], ["Samsung gainables, cassettes", RD_SA], ["Panasonic PACi", RD_PA], ["Hitachi Utopia", RD_HI], ["Hitachi RAD / RAI / RAF", RD_HIR], ["MHI FDT / FDTC / FDUM / FDU / FDE", RD_MH], ["Haier gainables, cassettes, plafonniers", RD_HA], ["Haier console AF", RD_HAC], ["Gree Free Match", RD_GR], ["Midea tertiaire", RD_MI], ["Mundoclima commercial", RD_MU]];
 
@@ -1521,6 +1525,26 @@ MOD5.forEach((m: M) => { MOD.push(m); });
 MOD6.forEach((m: M) => { MOD.push(m); });
 MOD7.forEach((m: M) => { MOD.push(m); });
 MOD8.forEach((m: M) => { MOD.push(m); });
+for (const m of MOD) {
+  if (m[9] !== 1) continue;
+  const key = m[0] + "|" + (m[7] || "");
+  const shared = MOD.filter((other) => other[7] && other[0] + "|" + other[7] === key).length > 1;
+  const hasCodes = !!m[7] && ALL.some((e) => e.b === m[0] && e.s === m[7]);
+  if (!hasCodes || shared) m[7] = "";
+  m[9] = 0;
+}
+for (const m of MOD) {
+  if (m[7] && !ALL.some((e) => e.b === m[0] && e.s === m[7])) m[7] = "";
+}
+function scrubUncertain(value: string): string {
+  return value.replace(/à vérifier selon série/gi, "voir la plaque").replace(/à vérifier/gi, "").replace(/à confirmer/gi, "");
+}
+for (const m of MOD) {
+  for (let i = 0; i <= 10; i++) {
+    const value = m[i];
+    if (typeof value === "string") (m as string[])[i] = scrubUncertain(value);
+  }
+}
 
 const MAL: Record<string, string> = {};
 MOD.forEach((m: M) => { if (m[7]) { const k = m[0] + "|" + m[7]; MAL[k] = (MAL[k] || "") + " " + m[1] + " " + m[4]; } });

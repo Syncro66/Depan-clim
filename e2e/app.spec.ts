@@ -56,7 +56,7 @@ function errorsOf(page: Page): string[] {
 
 test("recherche par code, mot-clé, modèle, accents et résultat vide", async ({ page }) => {
   await openApp(page);
-  const queries = ["E5", "e5", "U4", "P1", "E28", "1102", "H6", "sonde", "compresseur", "ventilateur", "zen3", "Zen 3", "HMIS3", "PEAD", "FBA", "hyoko", "Hyōkō"];
+  const queries = ["E5", "e5", "U4", "P1", "E28", "H6", "sonde", "compresseur", "ventilateur", "zen3", "Zen 3", "HMIS3", "PEAD", "FBA", "hyoko", "Hyōkō"];
   for (const query of queries) {
     await page.locator("#q").fill(query);
     await expect(page.locator(".count").first(), query).toBeVisible();
@@ -222,7 +222,7 @@ test("manifeste, hors ligne et remplacement du cache", async ({ page, context })
   expect(worker.status()).toBe(200);
   const workerText = await worker.text();
   expect(workerText).toContain("skipWaiting");
-  expect(workerText).toContain("depan-clim-v6");
+  expect(workerText).toContain("depan-clim-v7");
 
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
   await page.evaluate(async () => {
@@ -233,7 +233,7 @@ test("manifeste, hors ligne et remplacement du cache", async ({ page, context })
   await page.locator("#q").waitFor();
   await page.waitForFunction(async () => {
     const keys = await caches.keys();
-    return keys.some((key) => key.startsWith("depan-clim-v6")) && !keys.some((key) => key.startsWith("workbox-"));
+    return keys.some((key) => key.startsWith("depan-clim-v7")) && !keys.some((key) => key.startsWith("workbox-"));
   });
 
   await context.setOffline(true);
@@ -282,22 +282,20 @@ test("ballon thermodynamique : filtres et NeptuO E5", async ({ page }) => {
   await expect(card).toContainText("Bourgeois Global");
   await card.click();
   await expect(card.getByText("Source : Notice NeptuO III")).toBeVisible();
-  await expect(card.getByText(/sonde T4/)).toBeVisible();
+  await expect(card.getByText(/9 flashs/)).toBeVisible();
   expect(errorsOf(page)).toEqual([]);
 });
 
-test("Effie II 230 : recherches Effie E5 et EFFIE II 230", async ({ page }) => {
+test("EFFIE 230 E-BG : le code E5 est le capteur T4 d'ambiance", async ({ page }) => {
   await openApp(page);
   await page.locator("#q").fill("Effie E5");
   const card = page.locator("#codes article").filter({ hasText: "E5" });
   await expect(card).toHaveCount(1);
-  await expect(card).toContainText("Effie II 230");
-  await expect(card).toContainText("température ambiante");
+  await expect(card).toContainText("EFFIE");
+  await expect(card).toContainText("température ambiante T4");
   await card.click();
-  await expect(card.getByText(/tube d'eau chaude/)).toBeVisible();
   await expect(card.getByText("Source : Manuel d'installation et d'utilisation Bourgeois Global")).toBeVisible();
-  await page.locator("#q").fill("EFFIE II 230");
-  await expect(page.locator("#codes article").filter({ hasText: "E5" }).filter({ hasText: "T4" })).toBeVisible();
+  await expect(card.getByText(/tube d'eau chaude/)).toHaveCount(0);
   expect(errorsOf(page)).toEqual([]);
 });
 

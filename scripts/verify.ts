@@ -18,7 +18,7 @@ if (!e5.some((e) => e.c.toUpperCase().includes("E5"))) fail("E5 ne trouve aucun 
 const u0 = ALL.find((e) => e.b === "dk" && e.c === "U0" && e.s === "Split / Sky Air");
 if (!u0 || u0.m !== "Manque de réfrigérant") fail("fiche Daikin U0 absente ou modifiée");
 
-if (ALL.length !== 1526) fail("nombre de fiches inattendu : " + ALL.length);
+if (ALL.length !== 1416) fail("nombre de fiches inattendu : " + ALL.length);
 if (MOD.length !== 253) fail("nombre de gammes inattendu : " + MOD.length);
 
 const series = new Set(ALL.map((e) => e.b + "|" + e.s));
@@ -46,7 +46,7 @@ for (const brand of BRANDS) {
   if (!BL[brand.value]) fail("libellé manquant : " + brand.value);
 }
 const expected: [string, "codes" | "gammes"][] = [
-  ["E5", "codes"], ["U4", "codes"], ["P1", "codes"], ["E28", "codes"], ["1102", "codes"], ["H6", "codes"],
+  ["E5", "codes"], ["U4", "codes"], ["P1", "codes"], ["E28", "codes"], ["H6", "codes"],
   ["sonde", "codes"], ["compresseur", "codes"], ["ventilateur", "codes"],
   ["zen3", "gammes"], ["Zen 3", "gammes"], ["HMIS3", "gammes"], ["PEAD", "gammes"], ["FBA", "gammes"], ["hyoko", "gammes"], ["Hyōkō", "gammes"],
 ];
@@ -67,15 +67,16 @@ if (neptuoE5.length !== 1 || neptuoE5[0].b !== "bg" || !neptuoE5[0].m.toLowerCas
 const cet = rangesFor("", "all", "cet");
 if (!cet.some((m) => m[1] === "NeptuO") || !cet.some((m) => m[1] === "Calypso split")) fail("filtre ballon thermodynamique incomplet");
 const mono = rangesFor("", "all", "cmo").map((m) => m[1]);
-if (!mono.includes("Explorer V2") || !mono.includes("Explorer V3") || !mono.includes("Odyssée") || !mono.includes("Altherma M HW") || !mono.includes("MT-WH") || !mono.includes("WPA 303 ECO")) fail("filtre CET monobloc : " + mono.join(", "));
+if (!mono.includes("EFFIE 230 E-BG") || !mono.includes("Explorer V2") || !mono.includes("Explorer V3") || !mono.includes("Odyssée") || !mono.includes("Altherma M HW") || !mono.includes("MT-WH") || !mono.includes("WPA 303 ECO")) fail("filtre CET monobloc : " + mono.join(", "));
 const split = rangesFor("", "all", "cbi").map((m) => m[1]);
 if (!split.includes("Calypso split") || !split.includes("Odyssée split") || !split.includes("Yutampo")) fail("filtre CET bi-bloc : " + split.join(", "));
 const effie = codesFor("Effie E5", "all", "all", "", "all", {});
-if (effie.length !== 1 || !effie[0].s.includes("Effie II 230") || !effie[0].m.toLowerCase().includes("ambiante")) {
-  fail("Effie E5 doit ouvrir la fiche sonde T4 du manuel EFFIE");
+if (effie.length !== 1 || !effie[0].m.toLowerCase().includes("température ambiante t4")) {
+  fail("Effie E5 doit être le capteur de température ambiante T4 du manuel");
 }
-const effie230 = codesFor("EFFIE II 230", "all", "all", "", "all", {});
-if (!effie230.some((e) => e.c === "E5" && e.s.includes("Effie II 230"))) fail("EFFIE II 230 doit montrer la fiche E5");
+if (ALL.some((e) => e.v) || MOD.some((m) => m[9])) fail("une fiche porte encore un statut incertain");
+const blob = JSON.stringify(ALL) + JSON.stringify(MOD);
+if (/à vérifier/i.test(blob)) fail("la mention à vérifier est encore dans les fiches");
 
 console.log(JSON.stringify({
   fiches: ALL.length,

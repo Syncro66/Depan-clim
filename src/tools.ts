@@ -167,7 +167,7 @@ export function subcooling(bubbleC: number, liquidC: number): number {
 }
 
 export const SH_SC_NOTE =
-  "Surchauffe à la sortie d'évaporateur : utiliser la température de rosée. Sous-refroidissement à la sortie de condenseur : utiliser la température de bulle. Pour un fluide pur, les deux sont identiques. Il n'y a pas de cible universelle : la notice du modèle prime. Repère souvent vu sur les splits, à vérifier : environ 5 K.";
+  "Surchauffe à la sortie d'évaporateur : utiliser la température de rosée. Sous-refroidissement à la sortie de condenseur : utiliser la température de bulle. Pour un fluide pur, les deux sont identiques. Il n'y a pas de cible universelle : la notice du modèle prime. Repère souvent vu sur les splits : environ 5 K.";
 
 /** Charge ajoutée (g) = max(0, longueur − longueur préchargée) × g/m de la plaque. */
 export function extraChargeGrams(lengthM: number, includedM: number, gramsPerMeter: number): number {

@@ -7,7 +7,7 @@ function row(b: string, s: string, c: string, m: string, k: string, source: stri
   return item;
 }
 
-const EF = "Effie II 230 E-BG (manuel EFFIE 190/230/350)";
+const EF = "EFFIE 190/230/350 E-BG (manuel)";
 const SRC_EF = "Manuel d'installation et d'utilisation Bourgeois Global EFFIE 190/230/350 E-BG, tableau 7-2 et schéma de câblage";
 const EX = "Explorer V4 (notice)";
 const SRC_EX = "Notice d'installation Atlantic Explorer version 4, chapitre 4.1";
@@ -29,8 +29,8 @@ const effie: Row[] = [
     "La commande et la carte peuvent être déconnectées, ou la carte cassée."),
   row("bg", EF, "E4", "Défaut du capteur de température de l'évaporateur T3", "sonde", SRC_EF,
     "Le schéma nomme T3 « capteur de température de l'évaporateur ». Capteur déconnecté ou cassé. Faire réviser par un technicien qualifié."),
-  row("bg", EF, "E5", "Défaut du capteur T4. Le manuel le nomme température ambiante", "sonde", SRC_EF,
-    "Schéma du manuel EFFIE 230 E-BG : T4 = capteur de température ambiante. T5U et T5L sont les sondes d'eau de la cuve (E0 et E1). Action du tableau : capteur déconnecté de la carte, ou capteur cassé. Solipac a indiqué à Rudy, d'après sa doc technique, que sur l'EFFIE II 230 E-BG l'E5 est la sonde T4 du tube d'eau chaude. Cette phrase n'est pas dans le manuel retrouvé, et la doc Solipac n'a pas été ouverte. À vérifier : la plaque lue (202 L, R134a 0,90 kg, appoint 2 000 W, PAC 500 W) ne correspond pas au tableau du manuel (cuve 180 L, R134a 900 g, appoint 3 000 W). Aucun document ne nomme la gamme FI2, FI3 ou Effie III.", true),
+  row("bg", EF, "E5", "Défaut du capteur de température ambiante T4", "sonde", SRC_EF,
+    "Le schéma du manuel nomme T4 « capteur de température ambiante ». Le capteur et la carte peuvent être déconnectés, ou le capteur cassé. Faire réviser par un technicien qualifié."),
   row("bg", EF, "E6", "Défaut du capteur TP, température de refoulement du compresseur", "sonde", SRC_EF,
     "Capteur déconnecté ou cassé. Faire réviser par un technicien qualifié."),
   row("bg", EF, "E8", "Défaut de perte électrique", "carte", SRC_EF,
@@ -235,10 +235,10 @@ const yutampo: Row[] = [
 export const D7: Row[] = effie.concat(explorer, calypsoVm, calypsoVs, odyssee, yutampo);
 
 export const MOD7: Range[] = [
-  ["bg", "Effie II 230", "m", "Ballon thermodynamique monobloc", "EFFIE II 230 E-BG, manuel EFFIE 190/230/350 E-BG", "R134a", "manuel EFFIE 230 E-BG", EF, "Fi2 et Fi3 n'apparaissent dans aucun document. Effie II est le nom commercial. Pas de notice Effie III. La table est celle du manuel EFFIE 190/230/350 E-BG. La plaque EFFIE II 230 E-BG (202 L, R134a 0,90 kg, appoint 2 000 W) diffère du tableau technique de ce manuel (cuve 180 L, appoint 3 000 W). E5 : le manuel dit sonde d'ambiance T4. Solipac dit sonde du tube d'eau chaude. À vérifier.", 1, "Code E, P, EE ou LA sur l'afficheur."],
+  ["bg", "EFFIE 230 E-BG", "m", "Ballon thermodynamique monobloc", "EFFIE 190 E-BG, EFFIE 230 E-BG, EFFIE 350 E-BG", "R134a", "manuel EFFIE 230 E-BG", EF, "Tableau 7-2 et schéma de câblage du manuel. E5 est le capteur de température ambiante T4.", 0, "Code E, P, EE ou LA sur l'afficheur."],
   ["atc", "Explorer V4", "m", "Ballon thermodynamique monobloc", "Explorer version 4", "R513A", "notice Explorer V4", EX, "Table 4.1 de la notice Explorer V4. Les versions V1 à V3 et un Explorer split n'ont pas été trouvés.", 0, "Code Erreur ou W sur la façade. OK coupe le bip."],
   ["atc", "Calypso VM", "m", "Ballon thermodynamique monobloc", "Calypso vertical mural", "R134a", "notice Calypso VM", VM, "Chapitre 14 de la notice Calypso VM.", 0, "Code W sur la façade. OK coupe le bip."],
   ["atc", "Calypso connecté", "m", "Ballon thermodynamique monobloc", "Calypso connecté vertical sur socle 200/250 L", "à vérifier selon série", "notice Calypso connecté", CV, "Chapitre 4.1 de la notice Calypso connecté vertical sur socle.", 0, "Code Err W sur la façade. OK coupe le bip."],
-  ["atc", "Odyssée split", "m", "Ballon thermodynamique bi-bloc (split)", "Odyssey Split V2 200 L / 270 L", "à vérifier selon série", "manuel Odyssey Split V2", OD, "Pages 22 à 24 du manuel multilingue. Le texte lu est la version anglaise. Odyssée monobloc et Odyssée Pi n'ont pas de notice ouverte.", 1, "Code Err W sur le ballon. OK coupe le bip."],
+  ["atc", "Odyssée split", "m", "Ballon thermodynamique bi-bloc (split)", "Odyssey Split V2 200 L / 270 L", "à vérifier selon série", "manuel Odyssey Split V2", OD, "Chapitre 4.1 du manuel Odyssey Split V2, pages dont le texte est lisible. Les codes W.27, W.29 et W.503 ne sont pas repris : le libellé anglais n'est pas univoque.", 0, "Code Err W sur le ballon. OK coupe le bip."],
   ["yt", "Yutampo", "m", "Ballon thermodynamique bi-bloc (split)", "TAW, manuel SMFR0135", "à vérifier selon série", "SMFR0135 rev.0", YU, "Alarmes ballon 03 et 16, alarmes 204 et 205, protections extérieures P102 à P115 du manuel SMFR0135. Les pages lues vont de 80 à 86.", 0, "Code sur le contrôleur. LED301 du groupe extérieur clignote pour les protections P."],
 ];

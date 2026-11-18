@@ -36,9 +36,9 @@ const neptuo: Row[] = [
   row("bg", BG, "E4", "Protection haute température des collecteurs solaires", "fluide", SRC_BG,
     "Circuit solaire à débit très faible ou nul, câbles débranchés, pompe à eau en panne, carte en panne. Contrôler l'entrée et la sortie du fluide solaire, rebrancher, changer la pompe, sinon la carte. Voyant : 11 flashs."),
   row("bg", BG, "E5", "Problème de débit d'eau", "fluide", SRC_BG,
-    "Notice NeptuO III : circuit à débit très faible ou nul, câbles débranchés, pompe en panne, interrupteur de débit, carte. Contrôler l'entrée et la sortie du fluide, rebrancher, changer la pompe ou l'interrupteur de débit, sinon la carte. Voyant : 9 flashs. Ce n'est pas le ballon Effie. Sur l'Effie, E5 est une sonde T4 : ouvrir la fiche Effie.", true),
+    "Notice NeptuO III : circuit à débit très faible ou nul, câbles débranchés, pompe en panne, interrupteur de débit, carte. Contrôler l'entrée et la sortie du fluide, rebrancher, changer la pompe ou l'interrupteur de débit, sinon la carte. Voyant : 9 flashs. La sonde d'ambiance de cette notice est le code P5."),
   row("bg", BG, "E8", "Problème de communication", "com", SRC_BG,
-    "La notice affiche le titre et le voyant clair, sans la liste des causes. Contrôler les câbles entre carte et boîtier. À vérifier sur le schéma du modèle.", true),
+    "La notice NeptuO III donne ce titre et le voyant clair. Elle ne liste pas les contrôles."),
 ];
 
 const calypso: Row[] = [
@@ -309,11 +309,11 @@ const nuos: Row[] = [
 export const D6: Row[] = neptuo.concat(calypso, thermor, thermorSplit, kaliko, arostor, nuos);
 
 export const MOD6: Range[] = [
-  ["bg", "NeptuO", "m", "Ballon thermodynamique monobloc", "NeptuO III", "R290", "notice GZAX01", BG, "Table de la notice NeptuO III. E5 y est un défaut de débit d'eau (9 flashs). La sonde d'ambiance est P5. Un E5 sur un Effie est une autre fiche.", 1, "Code P ou E sur le boîtier et sur la carte. Le nombre de flashs de la LED confirme le code."],
+  ["bg", "NeptuO", "m", "Ballon thermodynamique monobloc", "NeptuO III", "R290", "notice GZAX01", BG, "Table de la notice NeptuO III. E5 est un défaut de débit d'eau (9 flashs). La sonde d'ambiance est P5.", 0, "Code P ou E sur le boîtier et sur la carte. Le nombre de flashs de la LED confirme le code."],
   ["atc", "Calypso split", "m", "Ballon thermodynamique bi-bloc (split)", "Calypso split inverter", "à vérifier selon série", "notice Atlantic", AT, "Table 4.1 de la notice Atlantic Calypso split inverter. Le bip se coupe avec OK.", 0, "Code Err ou Inf sur la façade du ballon."],
   ["th", "Aéromax 3", "m", "Ballon thermodynamique monobloc", "Aéromax 3", "R134a", "notice Aéromax 3", TH, "Table des codes alarme de la notice Aéromax 3. Le buzzer se coupe avec une touche.", 0, "Code Err sur le tableau de commande."],
   ["th", "Aéromax Split 3", "m", "Ballon thermodynamique bi-bloc (split)", "Aéromax Split 3", "R32", "notice U0736851", THS, "Chapitre 12 de la notice Thermor. Le bip se coupe avec OK.", 0, "Code Err W sur la façade du ballon."],
   ["dd", "Kaliko", "m", "Ballon thermodynamique monobloc", "TWH 200E, TWH 300E, TWH 300EH", "R134a", "notice 7605314-001-01", DD, "Codes b de blocage et E de verrouillage. L'historique Er bL garde les 16 derniers messages.", 0, "Code b ou E sur le tableau. Acquittement : couper le secteur, ou touche V pendant 2 secondes pour un E."],
-  ["as", "aroSTOR", "m", "Ballon thermodynamique monobloc", "VWL B 200/5, VWL B 270/5", "R290", "notice 951446", AS, "Annexe B de la notice Vaillant France. Quelques lignes du PDF sont très compactes : les fiches buS et ERR. 01 sont marquées à vérifier.", 1, "Message en toutes lettres sur l'écran aroSTOR."],
+  ["as", "aroSTOR", "m", "Ballon thermodynamique monobloc", "VWL B 200/5, VWL B 270/5", "R290", "notice 951446", AS, "Annexe B de la notice Vaillant France. Les lignes buS et ERR. 01 du PDF ne sont pas lisibles : elles ne sont pas dans l'application.", 0, "Message en toutes lettres sur l'écran aroSTOR."],
   ["ar", "Nuos split", "m", "Ballon thermodynamique bi-bloc (split)", "Nuos split inverter Wi-Fi", "à vérifier selon série", "manuel Ariston", AR, "Chapitre 7.10 du manuel Ariston. L'écran clignote. HP clignote si la pompe à chaleur est en cause, le symbole résistance si l'appoint est en cause.", 0, "Code numérique sur l'écran."],
 ];

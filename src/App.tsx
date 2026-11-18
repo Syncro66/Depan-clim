@@ -33,7 +33,7 @@ const HELP = [
   "Chips : marque, catégorie de panne, type d'unité (murale, gainable, cassette, console, plafonnier, multi, PAC air/eau, ballon thermodynamique monobloc ou bi-bloc). Les chips défilent à l'horizontale. « Anciennes gammes » = gammes hors catalogue 2025-2026.",
   "Le type d'unité limite aussi les codes aux tables des gammes de ce type.",
   "Toucher une fiche pour les causes et vérifications. Sur une gamme, « Ouvrir la table de codes » n'affiche que les codes de cette table.",
-  "Niveau de gamme : classement du fabricant quand il existe, sinon indicatif (fiche « à vérifier »).",
+  "Niveau de gamme : classement du fabricant quand il existe, sinon indicatif.",
 ];
 
 const METHODS: { heading: string; steps: { title: string; detail: string }[] }[] = [
@@ -111,13 +111,13 @@ const METHODS: { heading: string; steps: { title: string; detail: string }[] }[]
 function coverItems(): string[] {
   return [
     "Couvert : Daikin (split et Sky Air), Mitsubishi Electric (MSZ, MUZ, P-series), Hitachi (RAK/RAC), Toshiba (RAS et RAV), Atlantic / Fujitsu, LG, Samsung (split et CAC), Panasonic, Midea, Gree (U-Match), Heiwa, Mundoclima, Airton.",
-    "Modèles / gammes : " + MOD.length + " fiches (" + (BRANDS.length - 1) + " marques). Références, fluides et années relevés dans les catalogues et fiches fabricant ou distributeur ; quand la source est un revendeur ou que la table de codes n'est pas confirmée pour la gamme, la fiche est marquée « à vérifier ».",
+    "Modèles / gammes : " + MOD.length + " fiches (" + (BRANDS.length - 1) + " marques). Références, fluides et années relevés dans les catalogues et fiches fabricant ou distributeur. Chaque code affiché vient d'une notice ou d'un manuel.",
     "Heiwa « Yoko » : aucune gamme Heiwa de ce nom trouvée ; il s'agit probablement de Hyōkō (Hyōkō 3, console Hyōkō, Premium Hyōkō).",
-    "Ajouté : Mitsubishi Heavy (SRK-ZS-W), Haier (Pearl Premium), Hisense (table distributeur, à vérifier), Carrier (42QHP), Daikin Altherma 3, Mitsubishi Ecodan (FTC4 / FTC6), Atlantic Alféa (Excellia / Extensa A.I.), Gree muraux (Pular), Mundoclima H11, Heiwa PRO 2.",
+    "Ajouté : Mitsubishi Heavy (SRK-ZS-W), Haier (Pearl Premium), Carrier (42QHP), Daikin Altherma 3, Mitsubishi Ecodan (FTC4 / FTC6), Atlantic Alféa (Excellia / Extensa A.I.), Gree muraux (Pular), Mundoclima H11, Heiwa PRO 2.",
     "Toujours sans table sourcée : Gree Charmo, Midea Zenith, Mundoclima H9A / H10X / H14, Heiwa DRV et PAC air/eau Heiwa.",
-    "Unités intérieures ajoutées (gainables, cassettes, consoles, plafonniers, armoires) pour toutes les marques ; nouvelles tables : Daikin Sky Air (BRC1E / BRC1H, compléments), Mitsubishi City Multi (4 chiffres, à vérifier), MHI PAC (commande filaire), Hitachi Utopia, Haier gainable / cassette et console AF, Mundoclima MUCSR / MUCR / MUSTR-H6.",
+    "Unités intérieures ajoutées (gainables, cassettes, consoles, plafonniers, armoires) pour toutes les marques ; nouvelles tables : Daikin Sky Air (BRC1E / BRC1H, compléments), MHI PAC (commande filaire), Hitachi Utopia, Haier gainable / cassette et console AF, Mundoclima MUCSR / MUCR / MUSTR-H6.",
     "Sans table sourcée : Hisense tertiaire (LCAC), Mundoclima H14 / H11 commercial, Panasonic ECOi, Haier gainable haute pression, Mitsubishi SFZ / MLZ, MHI SRR, Airton gainable.",
-    "Catalogue 2025-2026 non vérifié : Atlantic / Fujitsu (doc. 2021), LG (catalogue 2024), Carrier (catalogue 2023) ; fiches marquées « à vérifier ».",
+    "Catalogues plus anciens pour certaines références : Atlantic / Fujitsu (doc. 2021), LG (catalogue 2024), Carrier (catalogue 2023).",
     "Chauffe-eau thermodynamiques : NeptuO, Effie II, Calypso (split, VM, connecté), Explorer V2, V3 et V4, Odyssée 200/270, Odyssée split V2, Thermor Aéromax, Kaliko, aroSTOR, Nuos split, Yutampo, Daikin Altherma M HW, NIBE MT-WH, Austria Email WPA 303. Toujours sans table sourcée ici : Samsung EHS, Saunier Duval Genia Air (famille aroTHERM, notice non ouverte). Ballons encore sans notice de codes : Explorer V1, Explorer split, Odyssée Pi si sa table diffère, Effie III, Sauter, Chaffoteaux, Panasonic CET, Mitsubishi Ecodan CET, Viessmann Vitocal 060-A et 262-A, Saunier Duval Magna Aqua, Stiebel Eltron WWK et SHP, Thaleos, Airton, Heiwa, Midea, Gree, Bosch CET, Cordivari, Lacaze, Ariston Nuos monobloc, Hitachi Yutaki S/M ECS.",
     "Airton : table relevée par un installateur, pas par le fabricant. Mundoclima MUPR-H3/H4/H6 : table identique à Midea dans le PDF Mundoclima.",
     "Heiwa : codes du même type que Gree, mais l'origine du fabricant n'est pas confirmée officiellement.",
@@ -314,7 +314,6 @@ export default function App() {
                 <div className="title-row">
                   <span className="code">{e.c}</span>
                   <span className="sub">{BL[e.b] + " · " + e.s}</span>
-                  {e.v ? <Status tone="warning">à vérifier selon modèle</Status> : null}
                 </div>
                 <div className="desc">{e.m}</div>
                 <div className="pills">
@@ -402,7 +401,7 @@ export default function App() {
         </Section>
       </div>
 
-      <p className="warning">Aide de terrain : le manuel de service du modèle fait foi ; « à vérifier » = sens incertain ou variable selon la série.</p>
+      <p className="warning">Aide de terrain : le manuel de service du modèle fait foi.</p>
       </>}
     </div>
   );
@@ -452,7 +451,6 @@ function RangeCard(props: { m: M; open: boolean; onToggle: () => void; onOpenTab
       <div className="title-row">
         <span className="range-name">{m[1]}</span>
         <span className="sub">{BL[m[0]] + " · " + m[3]}</span>
-        {m[9] ? <Status tone="warning">à vérifier</Status> : null}
         {isOld(m) ? <Status tone="neutral">ancienne gamme</Status> : null}
       </div>
       <div className="pills">
