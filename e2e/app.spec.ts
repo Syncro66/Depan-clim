@@ -222,7 +222,7 @@ test("manifeste, hors ligne et remplacement du cache", async ({ page, context })
   expect(worker.status()).toBe(200);
   const workerText = await worker.text();
   expect(workerText).toContain("skipWaiting");
-  expect(workerText).toContain("depan-clim-v7");
+  expect(workerText).toContain("depan-clim-v8");
 
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
   await page.evaluate(async () => {
@@ -233,7 +233,7 @@ test("manifeste, hors ligne et remplacement du cache", async ({ page, context })
   await page.locator("#q").waitFor();
   await page.waitForFunction(async () => {
     const keys = await caches.keys();
-    return keys.some((key) => key.startsWith("depan-clim-v7")) && !keys.some((key) => key.startsWith("workbox-"));
+    return keys.some((key) => key.startsWith("depan-clim-v8")) && !keys.some((key) => key.startsWith("workbox-"));
   });
 
   await context.setOffline(true);

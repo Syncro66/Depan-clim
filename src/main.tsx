@@ -7,7 +7,7 @@ import "./index.css";
 async function dropOldCaches(): Promise<void> {
   if (!("caches" in window)) return;
   const keys = await caches.keys();
-  await Promise.all(keys.filter((key) => !key.startsWith("depan-clim-v7")).map((key) => caches.delete(key)));
+  await Promise.all(keys.filter((key) => !key.startsWith("depan-clim-v8")).map((key) => caches.delete(key)));
 }
 
 if (import.meta.env.PROD) {

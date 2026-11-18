@@ -5,6 +5,7 @@ import { D5, MOD5 } from "./added3";
 import { D6, MOD6 } from "./cet";
 import { D7, MOD7 } from "./cet2";
 import { D8, MOD8 } from "./cet3";
+import { D9, MOD9 } from "./cet4";
 
 const MINT = "#05F3B9";
 const CYAN = "#01B4ED";
@@ -1147,7 +1148,7 @@ function build(): Item[] {
     const y = r[6] ? r[6].split("|") : DEF[r[4]] ? DEF[r[4]].split("|") : [];
     out.push({ id: b + i, b, s, c: r[2], m: r[3], k: r[4], x: r[5] ? r[5].split("|") : [], y, v: v || r[7] === 1 });
   };
-  D.concat(D2, D3, D4, D5, D6, D7, D8).forEach((r: R, i: number) => {
+  D.concat(D2, D3, D4, D5, D6, D7, D8, D9).forEach((r: R, i: number) => {
     if (r[7] === 1) return;
     mk(r, i, r[0], r[1], false);
     if (r[0] === "mi" && MUNDO_MIDEA.indexOf(r[2]) >= 0) mk(r, i, "mu", "MUPR-H3 / H4 / H6 (table identique Midea)", false);
@@ -1525,6 +1526,7 @@ MOD5.forEach((m: M) => { MOD.push(m); });
 MOD6.forEach((m: M) => { MOD.push(m); });
 MOD7.forEach((m: M) => { MOD.push(m); });
 MOD8.forEach((m: M) => { MOD.push(m); });
+MOD9.forEach((m: M) => { MOD.push(m); });
 for (const m of MOD) {
   if (m[9] !== 1) continue;
   const key = m[0] + "|" + (m[7] || "");

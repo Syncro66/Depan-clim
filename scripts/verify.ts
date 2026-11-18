@@ -18,8 +18,8 @@ if (!e5.some((e) => e.c.toUpperCase().includes("E5"))) fail("E5 ne trouve aucun 
 const u0 = ALL.find((e) => e.b === "dk" && e.c === "U0" && e.s === "Split / Sky Air");
 if (!u0 || u0.m !== "Manque de réfrigérant") fail("fiche Daikin U0 absente ou modifiée");
 
-if (ALL.length !== 1416) fail("nombre de fiches inattendu : " + ALL.length);
-if (MOD.length !== 253) fail("nombre de gammes inattendu : " + MOD.length);
+if (ALL.length !== 1492) fail("nombre de fiches inattendu : " + ALL.length);
+if (MOD.length !== 255) fail("nombre de gammes inattendu : " + MOD.length);
 
 const series = new Set(ALL.map((e) => e.b + "|" + e.s));
 for (const gamme of MOD) {
@@ -74,6 +74,10 @@ const effie = codesFor("Effie E5", "all", "all", "", "all", {});
 if (effie.length !== 1 || !effie[0].m.toLowerCase().includes("température ambiante t4")) {
   fail("Effie E5 doit être le capteur de température ambiante T4 du manuel");
 }
+const cm = codesFor("0403", "me", "all", "", "all", {});
+if (!cm.some((e) => e.m.toLowerCase().includes("communication série"))) fail("0403 City Multi absent");
+const er1 = codesFor("Vitocal ER 1", "vi", "all", "", "all", {});
+if (!er1.some((e) => e.c === "ER 1" && e.m.toLowerCase().includes("pressostat"))) fail("ER 1 Vitocal 060-A absent");
 if (ALL.some((e) => e.v) || MOD.some((m) => m[9])) fail("une fiche porte encore un statut incertain");
 const blob = JSON.stringify(ALL) + JSON.stringify(MOD);
 if (/à vérifier/i.test(blob)) fail("la mention à vérifier est encore dans les fiches");
