@@ -222,7 +222,7 @@ test("manifeste, hors ligne et remplacement du cache", async ({ page, context })
   expect(worker.status()).toBe(200);
   const workerText = await worker.text();
   expect(workerText).toContain("skipWaiting");
-  expect(workerText).toContain("depan-clim-v5");
+  expect(workerText).toContain("depan-clim-v6");
 
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
   await page.evaluate(async () => {
@@ -233,7 +233,7 @@ test("manifeste, hors ligne et remplacement du cache", async ({ page, context })
   await page.locator("#q").waitFor();
   await page.waitForFunction(async () => {
     const keys = await caches.keys();
-    return keys.some((key) => key.startsWith("depan-clim-v5")) && !keys.some((key) => key.startsWith("workbox-"));
+    return keys.some((key) => key.startsWith("depan-clim-v6")) && !keys.some((key) => key.startsWith("workbox-"));
   });
 
   await context.setOffline(true);
@@ -298,6 +298,18 @@ test("Effie II 230 : recherches Effie E5 et EFFIE II 230", async ({ page }) => {
   await expect(card.getByText("Source : Manuel d'installation et d'utilisation Bourgeois Global")).toBeVisible();
   await page.locator("#q").fill("EFFIE II 230");
   await expect(page.locator("#codes article").filter({ hasText: "E5" }).filter({ hasText: "T4" })).toBeVisible();
+  expect(errorsOf(page)).toEqual([]);
+});
+
+test("Explorer V3 et Austria Email WPA", async ({ page }) => {
+  await openApp(page);
+  await page.locator("#q").fill("Explorer V3");
+  await expect(page.locator("#codes article").filter({ hasText: "Erreur 03" })).toBeVisible();
+  await page.locator("#q").fill("WPA E05");
+  const card = page.locator("#codes article").filter({ hasText: "E05" });
+  await expect(card).toHaveCount(1);
+  await expect(card).toContainText("surpression");
+  await expect(card).toContainText("Austria Email");
   expect(errorsOf(page)).toEqual([]);
 });
 

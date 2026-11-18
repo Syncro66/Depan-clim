@@ -4,6 +4,7 @@ import { D4, MOD4 } from "./added2";
 import { D5, MOD5 } from "./added3";
 import { D6, MOD6 } from "./cet";
 import { D7, MOD7 } from "./cet2";
+import { D8, MOD8 } from "./cet3";
 
 const MINT = "#05F3B9";
 const CYAN = "#01B4ED";
@@ -53,6 +54,9 @@ const BRANDS: { value: string; label: string }[] = [
   { value: "as", label: "Vaillant aroSTOR" },
   { value: "ar", label: "Ariston" },
   { value: "yt", label: "Hitachi Yutampo" },
+  { value: "dm", label: "Daikin Altherma M HW" },
+  { value: "nb", label: "NIBE" },
+  { value: "ae", label: "Austria Email" },
 ];
 const BL: Record<string, string> = {};
 BRANDS.forEach((b) => { BL[b.value] = b.label; });
@@ -1144,7 +1148,7 @@ function build(): Item[] {
     const y = r[6] ? r[6].split("|") : DEF[r[4]] ? DEF[r[4]].split("|") : [];
     out.push({ id: b + i, b, s, c: r[2], m: r[3], k: r[4], x: r[5] ? r[5].split("|") : [], y, v: v || r[7] === 1 });
   };
-  D.concat(D2, D3, D4, D5, D6, D7).forEach((r: R, i: number) => {
+  D.concat(D2, D3, D4, D5, D6, D7, D8).forEach((r: R, i: number) => {
     mk(r, i, r[0], r[1], false);
     if (r[0] === "mi" && MUNDO_MIDEA.indexOf(r[2]) >= 0) mk(r, i, "mu", "MUPR-H3 / H4 / H6 (table identique Midea)", false);
     if (r[0] === "mi" && AIRTON.indexOf(r[2]) >= 0) mk(r, i, "ai", "Split (table type Midea, source non officielle)", true);
@@ -1188,6 +1192,9 @@ const READ: Record<string, string[]> = {
   dd: ["Code b (blocage) ou E (verrouillage) sur le tableau Kaliko", "Notice 7605314-001-01", "Un E s'acquitte par la touche V pendant 2 secondes. L'historique est dans le menu Er bL"],
   as: ["Message en toutes lettres sur l'écran aroSTOR", "Notice Vaillant 951446, annexe B", "Plusieurs défauts laissent l'appoint maintenir l'eau à 38 °C"],
   ar: ["Code numérique sur l'écran Nuos", "Manuel Ariston Nuos split inverter Wi-Fi, chapitre 7.10", "HP clignote si la pompe à chaleur est en cause"],
+  dm: ["Code AL, AH, Pr ou UtL sur le régulateur Altherma M HW", "Manuel Daikin 4P509215-1", "UtL arrête la pompe à chaleur et laisse la résistance"],
+  nb: ["Code Er dans le menu information du MT-WH", "Manuel NIBE MT-WH21", "Er3 arrête toute chauffe. Er4 et Er5 sont ignorés"],
+  ae: ["W avec un triangle jaune, E avec un triangle rouge", "Notice Austria Email WPA 303 ECO 2", "L'acquittement est dans le menu Détection d'erreur"],
 };
 
 type M = [string, string, string, string, string, string, string, string, string, number?, string?];
@@ -1513,6 +1520,7 @@ MOD4.forEach((m: M) => { MOD.push(m); });
 MOD5.forEach((m: M) => { MOD.push(m); });
 MOD6.forEach((m: M) => { MOD.push(m); });
 MOD7.forEach((m: M) => { MOD.push(m); });
+MOD8.forEach((m: M) => { MOD.push(m); });
 
 const MAL: Record<string, string> = {};
 MOD.forEach((m: M) => { if (m[7]) { const k = m[0] + "|" + m[7]; MAL[k] = (MAL[k] || "") + " " + m[1] + " " + m[4]; } });

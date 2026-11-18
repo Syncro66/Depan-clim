@@ -18,8 +18,8 @@ if (!e5.some((e) => e.c.toUpperCase().includes("E5"))) fail("E5 ne trouve aucun 
 const u0 = ALL.find((e) => e.b === "dk" && e.c === "U0" && e.s === "Split / Sky Air");
 if (!u0 || u0.m !== "Manque de réfrigérant") fail("fiche Daikin U0 absente ou modifiée");
 
-if (ALL.length !== 1456) fail("nombre de fiches inattendu : " + ALL.length);
-if (MOD.length !== 247) fail("nombre de gammes inattendu : " + MOD.length);
+if (ALL.length !== 1526) fail("nombre de fiches inattendu : " + ALL.length);
+if (MOD.length !== 253) fail("nombre de gammes inattendu : " + MOD.length);
 
 const series = new Set(ALL.map((e) => e.b + "|" + e.s));
 for (const gamme of MOD) {
@@ -67,7 +67,7 @@ if (neptuoE5.length !== 1 || neptuoE5[0].b !== "bg" || !neptuoE5[0].m.toLowerCas
 const cet = rangesFor("", "all", "cet");
 if (!cet.some((m) => m[1] === "NeptuO") || !cet.some((m) => m[1] === "Calypso split")) fail("filtre ballon thermodynamique incomplet");
 const mono = rangesFor("", "all", "cmo").map((m) => m[1]);
-if (!mono.includes("NeptuO") || !mono.includes("Effie II 230") || !mono.includes("Explorer V4") || !mono.includes("Calypso VM") || !mono.includes("Calypso connecté")) fail("filtre CET monobloc : " + mono.join(", "));
+if (!mono.includes("Explorer V2") || !mono.includes("Explorer V3") || !mono.includes("Odyssée") || !mono.includes("Altherma M HW") || !mono.includes("MT-WH") || !mono.includes("WPA 303 ECO")) fail("filtre CET monobloc : " + mono.join(", "));
 const split = rangesFor("", "all", "cbi").map((m) => m[1]);
 if (!split.includes("Calypso split") || !split.includes("Odyssée split") || !split.includes("Yutampo")) fail("filtre CET bi-bloc : " + split.join(", "));
 const effie = codesFor("Effie E5", "all", "all", "", "all", {});
