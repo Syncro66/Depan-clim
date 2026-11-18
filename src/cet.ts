@@ -36,7 +36,7 @@ const neptuo: Row[] = [
   row("bg", BG, "E4", "Protection haute température des collecteurs solaires", "fluide", SRC_BG,
     "Circuit solaire à débit très faible ou nul, câbles débranchés, pompe à eau en panne, carte en panne. Contrôler l'entrée et la sortie du fluide solaire, rebrancher, changer la pompe, sinon la carte. Voyant : 11 flashs."),
   row("bg", BG, "E5", "Problème de débit d'eau", "fluide", SRC_BG,
-    "Notice NeptuO III : circuit à débit très faible ou nul, câbles débranchés, pompe en panne, interrupteur de débit, carte. Contrôler l'entrée et la sortie du fluide, rebrancher, changer la pompe ou l'interrupteur de débit, sinon la carte. Voyant : 9 flashs. À vérifier : sur d'autres ballons de la même famille OEM, E5 est parfois la sonde T4 (ambiance). Ici la sonde d'ambiance est le code P5 / PP5, pas E5.", true),
+    "Notice NeptuO III : circuit à débit très faible ou nul, câbles débranchés, pompe en panne, interrupteur de débit, carte. Contrôler l'entrée et la sortie du fluide, rebrancher, changer la pompe ou l'interrupteur de débit, sinon la carte. Voyant : 9 flashs. Ce n'est pas le ballon Effie. Sur l'Effie, E5 est une sonde T4 : ouvrir la fiche Effie.", true),
   row("bg", BG, "E8", "Problème de communication", "com", SRC_BG,
     "La notice affiche le titre et le voyant clair, sans la liste des causes. Contrôler les câbles entre carte et boîtier. À vérifier sur le schéma du modèle.", true),
 ];
@@ -309,7 +309,7 @@ const nuos: Row[] = [
 export const D6: Row[] = neptuo.concat(calypso, thermor, thermorSplit, kaliko, arostor, nuos);
 
 export const MOD6: Range[] = [
-  ["bg", "NeptuO", "m", "Ballon thermodynamique monobloc", "NeptuO III", "R290", "notice GZAX01", BG, "Table de la notice NeptuO III. E5 y est un défaut de débit d'eau (9 flashs). La sonde d'ambiance est P5. Sur d'autres familles OEM, E5 est parfois la sonde T4 : à vérifier sur l'afficheur.", 1, "Code P ou E sur le boîtier et sur la carte. Le nombre de flashs de la LED confirme le code."],
+  ["bg", "NeptuO", "m", "Ballon thermodynamique monobloc", "NeptuO III", "R290", "notice GZAX01", BG, "Table de la notice NeptuO III. E5 y est un défaut de débit d'eau (9 flashs). La sonde d'ambiance est P5. Un E5 sur un Effie est une autre fiche.", 1, "Code P ou E sur le boîtier et sur la carte. Le nombre de flashs de la LED confirme le code."],
   ["atc", "Calypso split", "m", "Ballon thermodynamique bi-bloc (split)", "Calypso split inverter", "à vérifier selon série", "notice Atlantic", AT, "Table 4.1 de la notice Atlantic Calypso split inverter. Le bip se coupe avec OK.", 0, "Code Err ou Inf sur la façade du ballon."],
   ["th", "Aéromax 3", "m", "Ballon thermodynamique monobloc", "Aéromax 3", "R134a", "notice Aéromax 3", TH, "Table des codes alarme de la notice Aéromax 3. Le buzzer se coupe avec une touche.", 0, "Code Err sur le tableau de commande."],
   ["th", "Aéromax Split 3", "m", "Ballon thermodynamique bi-bloc (split)", "Aéromax Split 3", "R32", "notice U0736851", THS, "Chapitre 12 de la notice Thermor. Le bip se coupe avec OK.", 0, "Code Err W sur la façade du ballon."],

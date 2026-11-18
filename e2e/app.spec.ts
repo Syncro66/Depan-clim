@@ -222,7 +222,7 @@ test("manifeste, hors ligne et remplacement du cache", async ({ page, context })
   expect(worker.status()).toBe(200);
   const workerText = await worker.text();
   expect(workerText).toContain("skipWaiting");
-  expect(workerText).toContain("depan-clim-v4");
+  expect(workerText).toContain("depan-clim-v5");
 
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
   await page.evaluate(async () => {
@@ -233,7 +233,7 @@ test("manifeste, hors ligne et remplacement du cache", async ({ page, context })
   await page.locator("#q").waitFor();
   await page.waitForFunction(async () => {
     const keys = await caches.keys();
-    return keys.some((key) => key.startsWith("depan-clim-v4")) && !keys.some((key) => key.startsWith("workbox-"));
+    return keys.some((key) => key.startsWith("depan-clim-v5")) && !keys.some((key) => key.startsWith("workbox-"));
   });
 
   await context.setOffline(true);
@@ -283,6 +283,21 @@ test("ballon thermodynamique : filtres et NeptuO E5", async ({ page }) => {
   await card.click();
   await expect(card.getByText("Source : Notice NeptuO III")).toBeVisible();
   await expect(card.getByText(/sonde T4/)).toBeVisible();
+  expect(errorsOf(page)).toEqual([]);
+});
+
+test("Effie II 230 : recherches Effie E5 et EFFIE II 230", async ({ page }) => {
+  await openApp(page);
+  await page.locator("#q").fill("Effie E5");
+  const card = page.locator("#codes article").filter({ hasText: "E5" });
+  await expect(card).toHaveCount(1);
+  await expect(card).toContainText("Effie II 230");
+  await expect(card).toContainText("température ambiante");
+  await card.click();
+  await expect(card.getByText(/tube d'eau chaude/)).toBeVisible();
+  await expect(card.getByText("Source : Manuel d'installation et d'utilisation Bourgeois Global")).toBeVisible();
+  await page.locator("#q").fill("EFFIE II 230");
+  await expect(page.locator("#codes article").filter({ hasText: "E5" }).filter({ hasText: "T4" })).toBeVisible();
   expect(errorsOf(page)).toEqual([]);
 });
 
