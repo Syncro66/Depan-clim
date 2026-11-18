@@ -88,7 +88,7 @@ test("chips marque, catégorie, type, combinaisons et réinitialisation", async 
     await row(page, "Catégorie").getByRole("button", { name: label, exact: true }).click();
     await expect(page.locator("#codes article").first(), label).toBeVisible();
   }
-  for (const label of ["Murale", "Gainable", "Cassette", "Console", "Plafonnier / allège", "Multi / UE / DRV", "PAC air/eau", "Anciennes gammes"]) {
+  for (const label of ["Murale", "Gainable", "Cassette", "Console", "Plafonnier / allège", "Multi / UE / DRV", "PAC air/eau", "Ballon thermodynamique", "CET monobloc", "CET bi-bloc", "Anciennes gammes"]) {
     await row(page, "Type").getByRole("button", { name: label, exact: true }).click();
     await expect(page.locator("article.card").first(), label).toBeVisible();
   }
@@ -222,7 +222,7 @@ test("manifeste, hors ligne et remplacement du cache", async ({ page, context })
   expect(worker.status()).toBe(200);
   const workerText = await worker.text();
   expect(workerText).toContain("skipWaiting");
-  expect(workerText).toContain("depan-clim-v3");
+  expect(workerText).toContain("depan-clim-v4");
 
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
   await page.evaluate(async () => {
@@ -233,7 +233,7 @@ test("manifeste, hors ligne et remplacement du cache", async ({ page, context })
   await page.locator("#q").waitFor();
   await page.waitForFunction(async () => {
     const keys = await caches.keys();
-    return keys.some((key) => key.startsWith("depan-clim-v3")) && !keys.some((key) => key.startsWith("workbox-"));
+    return keys.some((key) => key.startsWith("depan-clim-v4")) && !keys.some((key) => key.startsWith("workbox-"));
   });
 
   await context.setOffline(true);
@@ -260,6 +260,29 @@ test("outils : pressions, CO2, surchauffe et charge", async ({ page }) => {
   await page.locator("#codes article").first().click();
   await page.getByRole("button", { name: "Copier" }).click();
   await expect(page.getByRole("button", { name: "Copié" })).toBeVisible();
+  expect(errorsOf(page)).toEqual([]);
+});
+
+test("ballon thermodynamique : filtres et NeptuO E5", async ({ page }) => {
+  await openApp(page);
+  await row(page, "Type").getByRole("button", { name: "Ballon thermodynamique", exact: true }).click();
+  await expect(page.locator(".range-name", { hasText: "NeptuO" })).toBeVisible();
+  await expect(page.locator(".range-name", { hasText: "Calypso split" })).toBeVisible();
+  await row(page, "Type").getByRole("button", { name: "CET monobloc", exact: true }).click();
+  await expect(page.locator(".range-name", { hasText: "NeptuO" })).toBeVisible();
+  await expect(page.locator(".range-name", { hasText: "Calypso split" })).toHaveCount(0);
+  await row(page, "Type").getByRole("button", { name: "CET bi-bloc", exact: true }).click();
+  await expect(page.locator(".range-name", { hasText: "Calypso split" })).toBeVisible();
+  await expect(page.locator(".range-name", { hasText: "NeptuO" })).toHaveCount(0);
+  await row(page, "Type").getByRole("button", { name: "Tous", exact: true }).click();
+  await page.locator("#q").fill("NeptuO E5");
+  const card = page.locator("#codes article").filter({ hasText: "E5" });
+  await expect(card).toHaveCount(1);
+  await expect(card).toContainText("Problème de débit d'eau");
+  await expect(card).toContainText("Bourgeois Global");
+  await card.click();
+  await expect(card.getByText("Source : Notice NeptuO III")).toBeVisible();
+  await expect(card.getByText(/sonde T4/)).toBeVisible();
   expect(errorsOf(page)).toEqual([]);
 });
 

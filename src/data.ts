@@ -2,6 +2,7 @@
 import { D3, MOD3 } from "./added";
 import { D4, MOD4 } from "./added2";
 import { D5, MOD5 } from "./added3";
+import { D6, MOD6 } from "./cet";
 
 const MINT = "#05F3B9";
 const CYAN = "#01B4ED";
@@ -44,6 +45,12 @@ const BRANDS: { value: string; label: string }[] = [
   { value: "vi", label: "Viessmann Vitocal (PAC air/eau)" },
   { value: "sp", label: "Sharp" },
   { value: "bo", label: "Bosch / Buderus (PAC air/eau)" },
+  { value: "bg", label: "Bourgeois Global" },
+  { value: "atc", label: "Atlantic (chauffe-eau)" },
+  { value: "th", label: "Thermor" },
+  { value: "dd", label: "De Dietrich" },
+  { value: "as", label: "Vaillant aroSTOR" },
+  { value: "ar", label: "Ariston" },
 ];
 const BL: Record<string, string> = {};
 BRANDS.forEach((b) => { BL[b.value] = b.label; });
@@ -1135,7 +1142,7 @@ function build(): Item[] {
     const y = r[6] ? r[6].split("|") : DEF[r[4]] ? DEF[r[4]].split("|") : [];
     out.push({ id: b + i, b, s, c: r[2], m: r[3], k: r[4], x: r[5] ? r[5].split("|") : [], y, v: v || r[7] === 1 });
   };
-  D.concat(D2, D3, D4, D5).forEach((r: R, i: number) => {
+  D.concat(D2, D3, D4, D5, D6).forEach((r: R, i: number) => {
     mk(r, i, r[0], r[1], false);
     if (r[0] === "mi" && MUNDO_MIDEA.indexOf(r[2]) >= 0) mk(r, i, "mu", "MUPR-H3 / H4 / H6 (table identique Midea)", false);
     if (r[0] === "mi" && AIRTON.indexOf(r[2]) >= 0) mk(r, i, "ai", "Split (table type Midea, source non officielle)", true);
@@ -1172,6 +1179,12 @@ const READ: Record<string, string[]> = {
   vi: ["Message à 2 caractères sur la Vitotronic 200 (WO1C)", "Instructions de service Viessmann, aperçu des messages", "A9 est un message groupé : lire l'historique"],
   sp: ["Numéro du type 1-0 ou 26-1 sur l'afficheur ou dans l'application Sharp", "Liste officielle Sharp : global.sharp, Air-Conditioner Error Code List", "Couper l'alimentation une minute, contrôler filtres et batteries, puis relire le numéro"],
   bo: ["Code à 4 chiffres sur la régulation Compress 7000i / Logatherm", "Manuel de service Bosch 6721823168", "A01 est souvent un avertissement installateur, H01 une alarme client"],
+  bg: ["Code P ou E affiché sur le boîtier NeptuO et sur la carte", "Notice NeptuO III, groupe MB (GZAX01)", "P1 à P6 = sondes. E1 à E3 = pressions et surchauffe. E5 = débit d'eau dans cette notice"],
+  atc: ["Code Err ou Inf sur la façade Atlantic", "Notice Calypso split inverter", "Le bip se coupe avec OK. La chauffe de secours passe souvent sur l'appoint électrique"],
+  th: ["Code Err ou Err W sur la façade Thermor", "Notices Aéromax 3 et Aéromax Split 3", "Le bip se coupe avec une touche ou avec OK"],
+  dd: ["Code b (blocage) ou E (verrouillage) sur le tableau Kaliko", "Notice 7605314-001-01", "Un E s'acquitte par la touche V pendant 2 secondes. L'historique est dans le menu Er bL"],
+  as: ["Message en toutes lettres sur l'écran aroSTOR", "Notice Vaillant 951446, annexe B", "Plusieurs défauts laissent l'appoint maintenir l'eau à 38 °C"],
+  ar: ["Code numérique sur l'écran Nuos", "Manuel Ariston Nuos split inverter Wi-Fi, chapitre 7.10", "HP clignote si la pompe à chaleur est en cause"],
 };
 
 type M = [string, string, string, string, string, string, string, string, string, number?, string?];
@@ -1495,6 +1508,7 @@ MOD2.forEach((m: M) => { MOD.push(m); });
 MOD3.forEach((m: M) => { MOD.push(m); });
 MOD4.forEach((m: M) => { MOD.push(m); });
 MOD5.forEach((m: M) => { MOD.push(m); });
+MOD6.forEach((m: M) => { MOD.push(m); });
 
 const MAL: Record<string, string> = {};
 MOD.forEach((m: M) => { if (m[7]) { const k = m[0] + "|" + m[7]; MAL[k] = (MAL[k] || "") + " " + m[1] + " " + m[4]; } });
@@ -1518,6 +1532,9 @@ const TY: { value: string; label: string }[] = [
   { value: "pla", label: "Plafonnier / allège" },
   { value: "mul", label: "Multi / UE / DRV" },
   { value: "pac", label: "PAC air/eau" },
+  { value: "cet", label: "Ballon thermodynamique" },
+  { value: "cmo", label: "CET monobloc" },
+  { value: "cbi", label: "CET bi-bloc" },
 ];
 const TYL: Record<string, string> = {};
 TY.forEach((x) => { TYL[x.value] = x.label; });
@@ -1531,6 +1548,10 @@ function tyOf(m: M): string[] {
   if (s.indexOf("plafonnier") >= 0 || s.indexOf("allege") >= 0) o.push("pla");
   if (s.indexOf("multi") >= 0 || s.indexOf("exterieure") >= 0 || s.indexOf("drv") >= 0 || s.indexOf("vrv") >= 0) o.push("mul");
   if (s.indexOf("pac air/eau") >= 0) o.push("pac");
+  const cet = s.indexOf("ballon thermodynamique") >= 0 || s.indexOf("chauffe-eau thermodynamique") >= 0;
+  if (cet) o.push("cet");
+  if (cet && s.indexOf("monobloc") >= 0) o.push("cmo");
+  if (cet && (s.indexOf("bi-bloc") >= 0 || s.indexOf("split") >= 0)) o.push("cbi");
   return o;
 }
 function isOld(m: M): boolean { return nz(m[1] + " " + m[6]).indexOf("ancienne") >= 0; }

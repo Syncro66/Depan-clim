@@ -34,7 +34,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        cacheId: "depan-clim-v3",
+        cacheId: "depan-clim-v4",
         globPatterns: ["**/*.{js,css,html,png,webp,svg,ico,webmanifest,json}"],
         navigateFallback: "index.html",
         clientsClaim: true,

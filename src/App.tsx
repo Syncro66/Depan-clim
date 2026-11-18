@@ -26,11 +26,11 @@ import { loadFavs, loadHistory, loadTheme, pushHistory, saveTheme, toggleFav, ty
 import ToolsPanel from "./ToolsPanel";
 import { BulletList, Chip, Pill, Section, Status, Steps } from "./ui";
 
-export const UPDATED = "17 novembre 2026";
+export const UPDATED = "18 novembre 2026";
 
 const HELP = [
   "Taper un code (U4, E1, P5…), un mot-clé (sonde, condensats, 12 clignotements) ou un nom de gamme / une référence (Zen 3, HMIS3, FBA, PEAD) : les gammes puis les codes correspondants s'affichent.",
-  "Chips : marque, catégorie de panne, type d'unité (murale, gainable, cassette, console, plafonnier, multi, PAC air/eau). Les chips défilent à l'horizontale. « Anciennes gammes » = gammes hors catalogue 2025-2026.",
+  "Chips : marque, catégorie de panne, type d'unité (murale, gainable, cassette, console, plafonnier, multi, PAC air/eau, ballon thermodynamique monobloc ou bi-bloc). Les chips défilent à l'horizontale. « Anciennes gammes » = gammes hors catalogue 2025-2026.",
   "Le type d'unité limite aussi les codes aux tables des gammes de ce type.",
   "Toucher une fiche pour les causes et vérifications. Sur une gamme, « Ouvrir la table de codes » n'affiche que les codes de cette table.",
   "Niveau de gamme : classement du fabricant quand il existe, sinon indicatif (fiche « à vérifier »).",
@@ -111,14 +111,14 @@ const METHODS: { heading: string; steps: { title: string; detail: string }[] }[]
 function coverItems(): string[] {
   return [
     "Couvert : Daikin (split et Sky Air), Mitsubishi Electric (MSZ, MUZ, P-series), Hitachi (RAK/RAC), Toshiba (RAS et RAV), Atlantic / Fujitsu, LG, Samsung (split et CAC), Panasonic, Midea, Gree (U-Match), Heiwa, Mundoclima, Airton.",
-    "Modèles / gammes : " + MOD.length + " fiches (20 marques). Références, fluides et années relevés dans les catalogues et fiches fabricant ou distributeur ; quand la source est un revendeur ou que la table de codes n'est pas confirmée pour la gamme, la fiche est marquée « à vérifier ».",
+    "Modèles / gammes : " + MOD.length + " fiches (" + (BRANDS.length - 1) + " marques). Références, fluides et années relevés dans les catalogues et fiches fabricant ou distributeur ; quand la source est un revendeur ou que la table de codes n'est pas confirmée pour la gamme, la fiche est marquée « à vérifier ».",
     "Heiwa « Yoko » : aucune gamme Heiwa de ce nom trouvée ; il s'agit probablement de Hyōkō (Hyōkō 3, console Hyōkō, Premium Hyōkō).",
     "Ajouté : Mitsubishi Heavy (SRK-ZS-W), Haier (Pearl Premium), Hisense (table distributeur, à vérifier), Carrier (42QHP), Daikin Altherma 3, Mitsubishi Ecodan (FTC4 / FTC6), Atlantic Alféa (Excellia / Extensa A.I.), Gree muraux (Pular), Mundoclima H11, Heiwa PRO 2.",
     "Toujours sans table sourcée : Gree Charmo, Midea Zenith, Mundoclima H9A / H10X / H14, Heiwa DRV et PAC air/eau Heiwa.",
     "Unités intérieures ajoutées (gainables, cassettes, consoles, plafonniers, armoires) pour toutes les marques ; nouvelles tables : Daikin Sky Air (BRC1E / BRC1H, compléments), Mitsubishi City Multi (4 chiffres, à vérifier), MHI PAC (commande filaire), Hitachi Utopia, Haier gainable / cassette et console AF, Mundoclima MUCSR / MUCR / MUSTR-H6.",
     "Sans table sourcée : Hisense tertiaire (LCAC), Mundoclima H14 / H11 commercial, Panasonic ECOi, Haier gainable haute pression, Mitsubishi SFZ / MLZ, MHI SRR, Airton gainable.",
     "Catalogue 2025-2026 non vérifié : Atlantic / Fujitsu (doc. 2021), LG (catalogue 2024), Carrier (catalogue 2023) ; fiches marquées « à vérifier ».",
-    "Ajouté depuis des manuels : Daikin VRV IV, Hitachi Yutaki, Panasonic Aquarea, LG Therma V, Vaillant aroTHERM, Viessmann Vitocal, Sharp (liste officielle), Bosch Compress 7000i / Buderus Logatherm. Toujours sans table sourcée ici : Samsung EHS, TCL, Electra, Inventor, Olimpia Splendid, De'Longhi, Argo, Sinclair, Tosot, Chigo, Hyundai, Kaysun, AUX, Ferroli, Baxi, Saunier Duval Genia Air (famille aroTHERM, notice non ouverte), Mundoclima H9A / H10X / H14, Gree Charmo, Midea Zenith, Heiwa DRV et air/eau, Hisense tertiaire, Panasonic ECOi, Mitsubishi SFZ / MLZ, MHI SRR, Airton gainable.",
+    "Ajouté depuis des manuels : Daikin VRV IV, Hitachi Yutaki, Panasonic Aquarea, LG Therma V, Vaillant aroTHERM, Viessmann Vitocal, Sharp (liste officielle), Bosch Compress 7000i / Buderus Logatherm. Chauffe-eau thermodynamiques : Bourgeois Global NeptuO, Atlantic Calypso split, Thermor Aéromax 3 et Split 3, De Dietrich Kaliko, Vaillant aroSTOR, Ariston Nuos split. Toujours sans table sourcée ici : Samsung EHS, TCL, Electra, Inventor, Olimpia Splendid, De'Longhi, Argo, Sinclair, Tosot, Chigo, Hyundai, Kaysun, AUX, Ferroli, Baxi, Saunier Duval Genia Air (famille aroTHERM, notice non ouverte), Mundoclima H9A / H10X / H14, Gree Charmo, Midea Zenith, Heiwa DRV et air/eau, Hisense tertiaire, Panasonic ECOi, Mitsubishi SFZ / MLZ, MHI SRR, Airton gainable. Ballons encore sans notice complète : Sauter, Chaffoteaux, Daikin Altherma M HW, Panasonic, Mitsubishi Ecodan CET, Viessmann Vitocal 060-A / 262-A, Saunier Duval Magna Aqua, Stiebel Eltron, Austria Email, Thaleos, Airton, Heiwa, Midea, Gree, Hitachi, Bosch Compress CET, Cordivari, Lacaze, NIBE, Atlantic Explorer, Odyssée, Calypso monobloc, Ariston Nuos monobloc.",
     "Airton : table relevée par un installateur, pas par le fabricant. Mundoclima MUPR-H3/H4/H6 : table identique à Midea dans le PDF Mundoclima.",
     "Heiwa : codes du même type que Gree, mais l'origine du fabricant n'est pas confirmée officiellement.",
     "Les valeurs de résistance ne sont données que là où une source les publie ; sinon, se référer au manuel du modèle.",

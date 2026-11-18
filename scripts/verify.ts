@@ -18,8 +18,8 @@ if (!e5.some((e) => e.c.toUpperCase().includes("E5"))) fail("E5 ne trouve aucun 
 const u0 = ALL.find((e) => e.b === "dk" && e.c === "U0" && e.s === "Split / Sky Air");
 if (!u0 || u0.m !== "Manque de réfrigérant") fail("fiche Daikin U0 absente ou modifiée");
 
-if (ALL.length !== 1228) fail("nombre de fiches inattendu : " + ALL.length);
-if (MOD.length !== 234) fail("nombre de gammes inattendu : " + MOD.length);
+if (ALL.length !== 1359) fail("nombre de fiches inattendu : " + ALL.length);
+if (MOD.length !== 241) fail("nombre de gammes inattendu : " + MOD.length);
 
 const series = new Set(ALL.map((e) => e.b + "|" + e.s));
 for (const gamme of MOD) {
@@ -59,6 +59,17 @@ if (codesFor("zzzzqqqq", "all", "all", "", "all", {}).length !== 0 || rangesFor(
 }
 if (!rangesFor("hyoko", "all", "all").some((gamme) => gamme[1].includes("Hyōkō"))) fail("hyoko ne trouve pas Hyōkō");
 if (!rangesFor("Zen 3", "all", "all").some((gamme) => gamme[1] === "Zen 3")) fail("Zen 3 absent");
+
+const neptuoE5 = codesFor("NeptuO E5", "all", "all", "", "all", {});
+if (neptuoE5.length !== 1 || neptuoE5[0].b !== "bg" || !neptuoE5[0].m.toLowerCase().includes("débit")) {
+  fail("NeptuO E5 doit renvoyer la fiche débit de la notice NeptuO III");
+}
+const cet = rangesFor("", "all", "cet");
+if (!cet.some((m) => m[1] === "NeptuO") || !cet.some((m) => m[1] === "Calypso split")) fail("filtre ballon thermodynamique incomplet");
+const mono = rangesFor("", "all", "cmo").map((m) => m[1]);
+if (!mono.includes("NeptuO") || !mono.includes("Aéromax 3") || !mono.includes("Kaliko") || !mono.includes("aroSTOR")) fail("filtre CET monobloc : " + mono.join(", "));
+const split = rangesFor("", "all", "cbi").map((m) => m[1]);
+if (!split.includes("Calypso split") || !split.includes("Aéromax Split 3") || !split.includes("Nuos split")) fail("filtre CET bi-bloc : " + split.join(", "));
 
 console.log(JSON.stringify({
   fiches: ALL.length,
